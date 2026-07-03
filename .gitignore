@@ -25,6 +25,10 @@ out/
 .DS_Store
 Thumbs.db
 
+# FABLE framework working memory (FABLE-CORE §3 / deep-task が生成する)
+STATE.md
+STATE-*.md
+
 # Debug
 npm-debug.log*
 yarn-debug.log*

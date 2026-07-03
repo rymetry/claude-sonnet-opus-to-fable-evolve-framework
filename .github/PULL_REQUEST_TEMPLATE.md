@@ -9,7 +9,8 @@
 ## 確認事項
 
 - [ ] ローカルで動作確認済み
-- [ ] lint / test が通る
+- [ ] `scripts/install.sh` 変更時: `bash -n scripts/install.sh` が通る
+- [ ] core/スキル変更時: AGENTS.md の重複対応表で整合を確認した
 - [ ] 破壊的変更がある場合は明記した
 
 ## 関連 Issue

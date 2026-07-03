@@ -1,6 +1,6 @@
 # Agent Context
 
-Sonnet 5 を Fable 5 級の品質で動かすためのコンテキストフレームワーク。
+Sonnet を Fable 級の品質で動かすためのコンテキストフレームワーク。
 Opus 用の軽量ハーネス(`core/OPUS-FABLE-CORE.md`、`install.sh --model opus` で導入)も含む。
 コンテンツはすべて Markdown で、ビルド・テストは無い。
 構成と設計判断は [README.md](README.md) と [docs/PLAN.md](docs/PLAN.md) を参照。

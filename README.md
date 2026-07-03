@@ -1,13 +1,13 @@
 # claude-sonnet-to-fable-evolve-framework
 
-Sonnet 5 を Fable 5 級の品質で動かすためのコンテキストフレームワーク。
-モデルの地力を変えるのではなく、Fable 5 が暗黙にやっている行動——深い計画、
-進捗の外部化、敵対的自己レビュー——を明示的な手順として Sonnet 5 に与える。
+Sonnet を Fable 級の品質で動かすためのコンテキストフレームワーク。
+モデルの地力を変えるのではなく、Fable が暗黙にやっている行動——深い計画、
+進捗の外部化、敵対的自己レビュー——を明示的な手順として Sonnet に与える。
 設計の背景と根拠は [docs/PLAN.md](docs/PLAN.md) を参照。
 
 ## 構成
 
-- [`core/SONNET-FABLE-CORE.md`](core/SONNET-FABLE-CORE.md) — Sonnet 5 用の中核行動原則。常時ロードして使う
+- [`core/SONNET-FABLE-CORE.md`](core/SONNET-FABLE-CORE.md) — Sonnet 用の中核行動原則。常時ロードして使う
 - [`core/OPUS-FABLE-CORE.md`](core/OPUS-FABLE-CORE.md) — Opus(4.8+)用の軽量ハーネス。Fable 5 が使えず
   Opus に切り替える場面用(設計根拠は [docs/PLAN.md](docs/PLAN.md) §8)
 - [`skills/deep-task/`](skills/deep-task/SKILL.md) — 複雑タスク用の計画→実行→検証オーケストレーション
@@ -33,7 +33,7 @@ bash /path/to/claude-sonnet-to-fable-evolve-framework/scripts/install.sh
 
 1. `skills/` 配下の 3 スキルを `<project>/.claude/skills/` にコピー(両モデル共用)
 2. 選択したモデル用の core を `<project>/.claude/fable/CORE.md` にコピー
-   (デフォルトは Sonnet 5 用。`--model opus` で Opus 用に切り替え)
+   (デフォルトは Sonnet 用。`--model opus` で Opus 用に切り替え)
 3. `<project>/CLAUDE.md` に `@.claude/fable/CORE.md` のインポート行を
    1 行追記(既存の内容には触れない。core の import が既にあればスキップ)
 
@@ -42,7 +42,7 @@ bash /path/to/claude-sonnet-to-fable-evolve-framework/scripts/install.sh
 (中身だけ差し替わり、import 行は変わらない):
 
 ```bash
-bash /path/to/claude-sonnet-to-fable-evolve-framework/scripts/install.sh                # Sonnet 5 用
+bash /path/to/claude-sonnet-to-fable-evolve-framework/scripts/install.sh                # Sonnet 用
 bash /path/to/claude-sonnet-to-fable-evolve-framework/scripts/install.sh --model opus   # Opus 用
 ```
 
@@ -131,23 +131,20 @@ bash /path/to/claude-sonnet-to-fable-evolve-framework/scripts/install.sh --globa
 ## チューニング
 
 効果が薄い箇所があれば `core/SONNET-FABLE-CORE.md` の該当セクションへ、否定形ではなく
-「何をすべきか」の形で具体指示を足す(Sonnet 5は肯定形の指示と実例に最もよく従う)。
+「何をすべきか」の形で具体指示を足す(Sonnetは肯定形の指示と実例に最もよく従う)。
 変更は少しずつ入れ、実タスクで確かめてから次を変えること。
 
-Sonnet 5 ↔ Opus の乗り換えは `install.sh --model` の再実行だけでよい
-(OPUS-FABLE-CORE はモデル名のバージョンを意図的にハードコードしていない)。
-将来の新モデルに合わせて Sonnet 用一式を更新する場合は、モデル名
-(Claude Sonnet 5 / Sonnet 5)を含む以下のファイルをすべて更新し、
-導入済みの各プロジェクトで `install.sh --force` を再実行して反映すること:
+Sonnet ↔ Opus の乗り換えは `install.sh --model` の再実行だけでよい。
+操舵テキスト(core・skills・templates)はモデル名のバージョンを意図的に
+含めていない(identity は「実際のモデル名を名乗る」指示なので、どのバージョン
+でも誤った自己申告にならない)。設計対象バージョンの記録は
+[docs/PLAN.md](docs/PLAN.md) のギャップ分析と各 core 冒頭の Calibration record
+コメントにのみ残している。
 
-- `core/SONNET-FABLE-CORE.md` — タイトルと「Operating Posture」の identity 宣言
-- `templates/claude-ai-project-instructions.md` — 冒頭の identity 宣言
-- `templates/kickoff-prompt.md` — 説明文
-- `skills/deep-task/SKILL.md` — タイトル
-- `scripts/install.sh` — バナー表示
-
-特に templates 内の「you are Claude Sonnet 5 and say so if asked」を残すと、
-乗り換え後のモデルが誤った自己申告をするので注意。
+将来の新世代モデル(Sonnet 6 等)が出た場合は、表記の置換ではなく
+**挙動前提の再評価**を行うこと: PLAN.md のギャップ分析を新モデルで見直し、
+不要になった補償を該当 core から削る。反映は導入済みの各プロジェクトで
+`install.sh --force` を再実行する。
 
 ## ライセンス
 

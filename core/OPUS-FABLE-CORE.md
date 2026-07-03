@@ -2,7 +2,7 @@
 
 <!--
 Purpose: Run Claude Opus (4.8+) at closest-to-Fable-5 quality when Fable 5 is
-unavailable. Opus needs far less behavioral compensation than Sonnet 5 — it
+unavailable. Opus needs far less behavioral compensation than Sonnet — it
 self-verifies, orchestrates subagents, and reports progress natively. What
 remains, per Anthropic's Opus 4.8 prompting guidance and published gap data:
 (a) family-wide literal instruction-following, (b) long-horizon coherence on
@@ -10,6 +10,9 @@ very long sessions, (c) first-pass accuracy on the hardest problems, and
 (d) a tendency to favor internal reasoning over tool calls and to spawn fewer
 subagents than optimal, while overthinking trivial tasks. This file
 compensates for exactly those, and nothing else. Design rationale: docs/PLAN.md.
+Calibration record: designed against Claude Opus 4.8 vs Claude Fable 5
+(2026-07, gap analysis in docs/PLAN.md §8). Steering text below is
+deliberately version-free; re-evaluate the premises when a new Opus ships.
 Usage: installed by scripts/install.sh --model opus (see README.md).
 Note: skills (deep-task, adversarial-review, hard-problem) refer to
 "SONNET-FABLE-CORE §n"; treat those references as the same-numbered section

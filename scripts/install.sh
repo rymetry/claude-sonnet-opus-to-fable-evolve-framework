@@ -2,7 +2,7 @@
 set -euo pipefail
 
 # =============================================================================
-# install.sh — Claude Evolve Framework の導入(Sonnet 5 用 / Opus 用)
+# install.sh — Claude Evolve Framework の導入(Sonnet 用 / Opus 用)
 #
 # 使い方(プロジェクト単位で導入。導入したいプロジェクトのルートで実行):
 #   cd /path/to/your-project
@@ -10,7 +10,7 @@ set -euo pipefail
 #
 # オプション:
 #   --model sonnet|opus  導入する core を選択(デフォルト: sonnet)
-#                        sonnet → core/SONNET-FABLE-CORE.md(Sonnet 5 を Fable 5 級に引き上げる)
+#                        sonnet → core/SONNET-FABLE-CORE.md(Sonnet を Fable 級に引き上げる)
 #                        opus   → core/OPUS-FABLE-CORE.md(Opus 用の軽量ハーネス)
 #   --force              既存スキルを確認なしで上書き(フレームワーク更新時の再導入用)
 #   --global             プロジェクトではなく ~/.claude/(全プロジェクト共通)に導入

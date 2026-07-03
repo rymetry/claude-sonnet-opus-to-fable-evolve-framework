@@ -3,7 +3,7 @@ name: deep-task
 description: "Full plan-execute-verify orchestration for complex, long-horizon, or high-stakes tasks (multi-file changes, large analyses, anything spanning many steps or sessions). Use when the user says 'deep-task' or 'deep task', or when a task is clearly complex: ambiguous scope, more than ~10 steps, or costly to get wrong. NOT for simple or routine tasks, even if they touch multiple files."
 ---
 
-# Deep Task — Fable-grade orchestration on Sonnet 5
+# Deep Task — Fable-grade orchestration
 
 This skill turns one complex request into a managed project with explicit planning,
 external memory, delegation, and mandatory verification. Follow ALL phases in order.

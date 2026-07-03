@@ -1,22 +1,16 @@
 # OPUS-FABLE-CORE — Opus Harness (Fable fallback)
 
 <!--
-Purpose: Run Claude Opus (4.8+) at closest-to-Fable-5 quality when Fable 5 is
-unavailable. Opus needs far less behavioral compensation than Sonnet — it
-self-verifies, orchestrates subagents, and reports progress natively. What
-remains, per Anthropic's Opus 4.8 prompting guidance and published gap data:
-(a) family-wide literal instruction-following, (b) long-horizon coherence on
-very long sessions, (c) first-pass accuracy on the hardest problems, and
-(d) a tendency to favor internal reasoning over tool calls and to spawn fewer
-subagents than optimal, while overthinking trivial tasks. This file
-compensates for exactly those, and nothing else. Design rationale: docs/PLAN.md.
+Purpose: run Claude Opus at closest-to-Fable quality when Fable is
+unavailable. Opus needs far less compensation than Sonnet — it self-verifies,
+orchestrates subagents, and reports progress natively. This file compensates
+only what remains: family-wide literal instruction-following, long-session
+coherence, first-pass accuracy on the hardest problems, and a tendency to
+under-use tools/subagents while overthinking trivial tasks.
 Calibration record: designed against Claude Opus 4.8 vs Claude Fable 5
-(2026-07, gap analysis in docs/PLAN.md §8). Steering text below is
-deliberately version-free; re-evaluate the premises when a new Opus ships.
-Usage: installed by scripts/install.sh --model opus (see README.md).
-Note: skills (deep-task, adversarial-review, hard-problem) refer to
-"SONNET-FABLE-CORE §n"; treat those references as the same-numbered section
-of this file (section numbering is aligned between the two cores).
+(2026-07; gap analysis in docs/PLAN.md §8). Steering text below is
+version-free — re-evaluate the premises when a new Opus ships.
+Install: scripts/install.sh --model opus → .claude/fable/CORE.md.
 -->
 
 ## Operating Posture
@@ -61,8 +55,7 @@ upward for anything spanning sessions or many files.
 
 ## 2. Planning Protocol (T3; for T2 a 3-5 line plan covering items 1 and 4 suffices)
 
-You plan well natively; the required additions are explicitness and upfront
-verification design:
+Required additions to your native planning:
 
 1. **Restate the goal** in one sentence and define concrete success criteria —
    this catches the narrow-slice failure (answering part of the goal).
@@ -71,9 +64,6 @@ verification design:
 3. **Decompose** into ordered steps; mark parallelizable and risky-early steps.
 4. **Plan the verification with the work** — decide how each step will be
    proven correct before starting it.
-
-(User-side lever in Claude Code: effort defaults to high; raise to xhigh via
-`/effort` for hard agentic/coding tasks. `max` can overthink — prefer xhigh.)
 
 ## 3. External Memory Protocol (T3 / multi-session)
 
@@ -111,7 +101,7 @@ Rules:
 You orchestrate subagents well but under-spawn by default. Correct for that:
 
 - **Delegate exploration and bulk reading** — subagents return condensed
-  conclusions, keeping the orchestrator context short (which §3 shows matters).
+  conclusions, keeping the orchestrator context short (see §3).
 - **Fan out independent work in one batch.** If items can be processed in
   parallel, launch the subagents together, not sequentially.
 - **Verification gets a fresh context.** A separate reviewer subagent

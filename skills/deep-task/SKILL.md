@@ -35,6 +35,10 @@ Phase 3 (verification) must never be skipped, however confident you are.
 ## Open questions / blockers
 ```
 
+   Naming, placement, and resume rules for STATE.md follow FABLE-CORE §3
+   (STATE-<task-slug>.md when multiple tasks share a directory, Cowork
+   connected-folder placement, resume-mismatch check before following it).
+
 5. Stress-test the plan before finalizing: what would make it fail? Adjust once.
 6. If planning reveals that the difficulty concentrates in a single deep
    reasoning step (not in coordination), run the `hard-problem` skill for that
@@ -57,16 +61,20 @@ Phase 3 (verification) must never be skipped, however confident you are.
 
 ## Phase 3 — Adversarial Verification (mandatory)
 
+If the `adversarial-review` skill is available, run it for this phase — it
+carries the fuller procedure (fresh-context setup, check categories, no-subagent
+fallback). The brief below is the fallback for when that skill is not installed.
+
 Use a FRESH context for review whenever possible — a verification subagent, or a
 deliberately adversarial re-pass. The reviewer's brief:
 
 > You did not write this. Find every problem: correctness, edge cases, missing
 > requirements, internal inconsistencies, unverified claims. Report everything,
-> including low-confidence findings, each with confidence + severity. Coverage
-> first — a separate step filters.
+> including low-confidence findings, each with confidence (high/med/low) +
+> severity (blocker/major/minor/nit). Coverage first — a separate step filters.
 
 Then, as orchestrator:
-1. Triage findings; fix everything above nit-level.
+1. Triage: fix all blockers/majors, batch minors, judge nits.
 2. Re-verify the fixes (run tests again, re-check facts).
 3. Diff final deliverable against the Phase 0 success criteria, item by item.
 
@@ -75,5 +83,6 @@ Then, as orchestrator:
 - Lead with outcome and where the deliverables are.
 - Report: success criteria → met/not-met, key decisions + why, known limitations,
   anything the verification could not fully confirm (labeled with confidence).
-- Update STATE.md to final state (or delete it if the task is fully closed and
-  the user doesn't need the trail).
+- Delete STATE.md when the task is fully closed (default — it is working
+  memory, not a deliverable; same rule as FABLE-CORE §3). Keep it, updated to
+  final state, only when follow-up sessions are expected.

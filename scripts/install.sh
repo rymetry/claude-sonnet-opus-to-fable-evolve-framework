@@ -2,29 +2,34 @@
 set -euo pipefail
 
 # =============================================================================
-# install.sh — Sonnet 5 → Fable 5級 Elevation Framework を Claude Code に導入
+# install.sh — Sonnet 5 → Fable 5級 Elevation Framework の導入
 #
-# 使い方:
-#   bash scripts/install.sh          # 対話モード(既存スキルの上書き前に確認)
-#   bash scripts/install.sh --force  # 確認なしで上書き
+# 使い方(プロジェクト単位で導入。導入したいプロジェクトのルートで実行):
+#   cd /path/to/your-project
+#   bash /path/to/claude-sonnet-to-fable-evolve-framework/scripts/install.sh
 #
-# やること:
-#   1. skills/ 配下の全スキルを ~/.claude/skills/ にコピー
-#   2. core/FABLE-CORE.md を ~/.claude/fable/FABLE-CORE.md にコピー(常に上書き)
-#   3. ~/.claude/CLAUDE.md に @import 行を追記(空行 + 1 行。既にあればスキップ)
+# オプション:
+#   --force   既存スキルを確認なしで上書き(フレームワーク更新時の再導入用)
+#   --global  プロジェクトではなく ~/.claude/(全プロジェクト共通)に導入
+#
+# やること(プロジェクト導入時。--global は対象が ~/.claude/ になる):
+#   1. skills/ 配下の全スキルを <project>/.claude/skills/ にコピー
+#   2. core/FABLE-CORE.md を <project>/.claude/fable/FABLE-CORE.md にコピー(常に上書き)
+#   3. <project>/CLAUDE.md に @.claude/fable/FABLE-CORE.md を追記
+#      (空行 + 1 行。FABLE-CORE の import 行が既にあればスキップ)
 #
 # 変更前に前提を一括検証し、検証に失敗した場合は何も変更せず終了する。
-# 再実行しても安全(冪等)。既存スキルの更新を無条件で取り込むには --force。
-# 非対話環境(CI 等)では既存スキルの上書き確認は出ず、スキップして続行する。
+# 再実行しても安全(冪等)。非対話環境(CI 等)では既存スキルの上書き確認は
+# 出ず、スキップして続行する。
 # =============================================================================
 
-: "${HOME:?❌ HOME が設定されていません}"
-
 FORCE=0
+GLOBAL=0
 for arg in "$@"; do
   case "$arg" in
     --force) FORCE=1 ;;
-    *) echo "❌ 不明な引数: $arg (使い方: bash scripts/install.sh [--force])"; exit 1 ;;
+    --global) GLOBAL=1 ;;
+    *) echo "❌ 不明な引数: $arg (使い方: bash scripts/install.sh [--force] [--global])"; exit 1 ;;
   esac
 done
 
@@ -33,13 +38,25 @@ SCRIPT_SOURCE="${BASH_SOURCE[0]:-$0}"
 SCRIPT_DIR="$(cd "$(dirname "$SCRIPT_SOURCE")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 
-CLAUDE_DIR="$HOME/.claude"
+if [[ "$GLOBAL" -eq 1 ]]; then
+  : "${HOME:?❌ HOME が設定されていません}"
+  TARGET_DESC="グローバル ($HOME/.claude)"
+  CLAUDE_DIR="$HOME/.claude"
+  CLAUDE_MD="$CLAUDE_DIR/CLAUDE.md"
+  # チルダ表記で追記する(CLAUDE.md の @import は ~ を解釈する。絶対パスだと
+  # ホームディレクトリにスペースを含む環境で無音で壊れる)
+  IMPORT_LINE='@~/.claude/fable/FABLE-CORE.md'
+else
+  TARGET_ROOT="$(pwd)"
+  TARGET_DESC="プロジェクト ($TARGET_ROOT)"
+  CLAUDE_DIR="$TARGET_ROOT/.claude"
+  CLAUDE_MD="$TARGET_ROOT/CLAUDE.md"
+  # プロジェクトの CLAUDE.md からの相対パスで参照する(リテラルにスペースを
+  # 含まないため、プロジェクトの絶対パスにスペースがあっても壊れない)
+  IMPORT_LINE='@.claude/fable/FABLE-CORE.md'
+fi
 SKILLS_DST="$CLAUDE_DIR/skills"
 FABLE_DST="$CLAUDE_DIR/fable"
-CLAUDE_MD="$CLAUDE_DIR/CLAUDE.md"
-# チルダ表記で追記する(CLAUDE.md の @import は ~ を解釈する。絶対パスだと
-# ホームディレクトリにスペースを含む環境で無音で壊れる)
-IMPORT_LINE='@~/.claude/fable/FABLE-CORE.md'
 
 # 対話可能か(stdin が端末か)。非対話では確認プロンプトを出さずスキップする
 INTERACTIVE=0
@@ -57,7 +74,8 @@ done
 PREFLIGHT_OK=1
 
 [[ -f "$REPO_ROOT/core/FABLE-CORE.md" ]] || {
-  echo "❌ core/FABLE-CORE.md が見つかりません。リポジトリ内から実行してください。"
+  echo "❌ core/FABLE-CORE.md が見つかりません。フレームワークのリポジトリ配下の"
+  echo "   scripts/install.sh を実行してください。"
   PREFLIGHT_OK=0
 }
 [[ ${#SKILLS[@]} -gt 0 ]] || {
@@ -82,9 +100,15 @@ echo ""
 echo "==================================================="
 echo "  Sonnet 5 → Fable 5級 Elevation Framework install"
 echo "  Source: $REPO_ROOT"
-echo "  Target: $CLAUDE_DIR"
+echo "  Target: $TARGET_DESC"
 echo "==================================================="
 echo ""
+
+if [[ "$GLOBAL" -ne 1 && "$TARGET_ROOT" == "$REPO_ROOT" ]]; then
+  echo "ℹ️  フレームワーク自身のリポジトリが導入先です(このリポジトリで"
+  echo "   スキルを有効化する意図ならこのまま進めて問題ありません)。"
+  echo ""
+fi
 
 # ---------------------------------------------------------------------------
 # 1. スキルのコピー
@@ -114,8 +138,7 @@ for skill in "${SKILLS[@]}"; do
 done
 
 # ---------------------------------------------------------------------------
-# 2. FABLE-CORE の配置(スペースなし固定パス。@import はスペース入りパスで
-#    無音で失敗する既知バグがあるため、clone 先を直接参照しない)
+# 2. FABLE-CORE の配置
 # ---------------------------------------------------------------------------
 echo ""
 echo "📄 Installing FABLE-CORE to $FABLE_DST ..."
@@ -124,12 +147,14 @@ cp "$REPO_ROOT/core/FABLE-CORE.md" "$FABLE_DST/FABLE-CORE.md"
 echo "  ✅ FABLE-CORE.md"
 
 # ---------------------------------------------------------------------------
-# 3. ~/.claude/CLAUDE.md に @import 行を追記(冪等)
-#    行全体一致で判定する(コメントアウト行や部分文字列を誤検知しない)
+# 3. CLAUDE.md に @import 行を追記(冪等)
+#    「@ で始まり FABLE-CORE.md で終わる行」があれば導入済みとみなす。
+#    (@core/FABLE-CORE.md 等の別経路 import との二重ロードを防ぐ。
+#     コメントアウト行や部分文字列は誤検知しない)
 # ---------------------------------------------------------------------------
 echo ""
-if [[ -f "$CLAUDE_MD" ]] && grep -qxF "$IMPORT_LINE" "$CLAUDE_MD"; then
-  echo "🔗 CLAUDE.md には既にインポート行があります(変更なし)"
+if [[ -f "$CLAUDE_MD" ]] && grep -qE '^@.*FABLE-CORE\.md[[:space:]]*$' "$CLAUDE_MD"; then
+  echo "🔗 CLAUDE.md には既に FABLE-CORE の import 行があります(変更なし)"
 else
   {
     [[ -f "$CLAUDE_MD" && -s "$CLAUDE_MD" ]] && echo ""
@@ -143,7 +168,11 @@ fi
 # ---------------------------------------------------------------------------
 echo ""
 echo "🎉 導入完了。動作確認:"
-echo "   1. claude を起動し「利用可能なスキルを教えて」で deep-task /"
+if [[ "$GLOBAL" -eq 1 ]]; then
+  echo "   1. claude を起動し「利用可能なスキルを教えて」で deep-task /"
+else
+  echo "   1. 導入先プロジェクトで claude を起動し「利用可能なスキルを教えて」で deep-task /"
+fi
 echo "      adversarial-review / hard-problem が見えることを確認"
 echo "   2. 複雑なタスクを依頼して 計画 → STATE.md 作成 → 検証 の流れが"
 echo "      発動するか確認(明示起動は「deep-taskで進めて」)"

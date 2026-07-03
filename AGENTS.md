@@ -11,7 +11,9 @@ Sonnet 5 を Fable 5 級の品質で動かすためのコンテキストフレ�
 ## コマンド
 
 - 導入スクリプトの構文チェック: `bash -n scripts/install.sh`
-- 導入スクリプトの動作確認(実環境を汚さない): `HOME=$(mktemp -d) bash scripts/install.sh --force`
+- 導入スクリプトの動作確認(実環境を汚さない):
+  - プロジェクト導入: `REPO=$(pwd) && (cd "$(mktemp -d)" && bash "$REPO/scripts/install.sh" --force)`
+  - グローバル導入: `HOME=$(mktemp -d) bash scripts/install.sh --global --force`
 
 ## 編集ルール
 

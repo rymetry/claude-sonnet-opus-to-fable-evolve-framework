@@ -18,25 +18,30 @@ Sonnet 5 を Fable 5 級の品質で動かすためのコンテキストフレ�
 
 ### Claude Code(CLI / デスクトップ)— 推奨環境
 
+**プロジェクト単位で導入する**(推奨。スコープが対象プロジェクトに閉じ、
+`.claude/` と `CLAUDE.md` をコミットすればチームにも共有できる):
+
 ```bash
 git clone https://github.com/rymetry/claude-sonnet-to-fable-evolve-framework.git
-cd claude-sonnet-to-fable-evolve-framework
-bash scripts/install.sh
+cd /path/to/your-project
+bash /path/to/claude-sonnet-to-fable-evolve-framework/scripts/install.sh
 ```
 
-スクリプトは以下を行う(再実行しても安全):
+スクリプトは導入先プロジェクトに以下を行う(再実行しても安全):
 
-1. `skills/` 配下の 3 スキルを `~/.claude/skills/` にコピー
-2. `core/FABLE-CORE.md` を `~/.claude/fable/FABLE-CORE.md` にコピー
-3. `~/.claude/CLAUDE.md` に `@~/.claude/fable/FABLE-CORE.md` のインポート行を
-   1 行追記(既存の CLAUDE.md の内容には触れない。既に行があればスキップ)
+1. `skills/` 配下の 3 スキルを `<project>/.claude/skills/` にコピー
+2. `core/FABLE-CORE.md` を `<project>/.claude/fable/FABLE-CORE.md` にコピー
+3. `<project>/CLAUDE.md` に `@.claude/fable/FABLE-CORE.md` のインポート行を
+   1 行追記(既存の内容には触れない。FABLE-CORE の import が既にあればスキップ)
 
 再実行時、既に導入済みのスキルがあると上書き前に確認プロンプトが出る
 (非対話環境ではスキップして続行)。フレームワーク更新時など、確認なしで
-全スキルを更新するには `--force` を付ける:
+全スキルを更新するには `--force` を付ける。プロジェクトを問わず常用する場合は
+`--global` で `~/.claude/`(全プロジェクト共通)に導入することもできる:
 
 ```bash
-bash scripts/install.sh --force
+bash /path/to/claude-sonnet-to-fable-evolve-framework/scripts/install.sh --force
+bash /path/to/claude-sonnet-to-fable-evolve-framework/scripts/install.sh --global
 ```
 
 動作確認: `claude` を起動し、「利用可能なスキルを教えて」で 3 スキルが
@@ -48,21 +53,25 @@ bash scripts/install.sh --force
 <details>
 <summary>手動で導入する場合</summary>
 
-1. `core/FABLE-CORE.md` の内容を `~/.claude/CLAUDE.md`(全プロジェクト共通)
-   またはリポジトリ直下の `CLAUDE.md`(プロジェクト単位)に追記する。
-   既存の CLAUDE.md がある場合は上書きせず末尾に追加すること。冒頭の HTML
-   コメント(セットアップ説明)は貼らなくてよい。
+1. `core/FABLE-CORE.md` を導入先プロジェクトの `.claude/fable/` にコピーし、
+   プロジェクト直下の `CLAUDE.md` に `@.claude/fable/FABLE-CORE.md` を1行追記する
+   (全プロジェクト共通にする場合は `~/.claude/CLAUDE.md` に
+   `@~/.claude/fable/FABLE-CORE.md`)。CLAUDE.md が既にある場合は上書きせず
+   末尾に追加すること。FABLE-CORE 冒頭の HTML コメントは配布用の説明なので
+   本文追記する場合は貼らなくてよい。
 
    補足: CLAUDE.md の `@path` インポートは**パスにスペースを含むと無音で
-   失敗する**既知バグがある。clone 先のパスにスペースが含まれる場合は、
-   インポートではなく本文追記にするか、スペースなしの場所に置いた
-   コピーを参照すること(install.sh はこのため `~/.claude/fable/` を使う)。
+   失敗する**既知バグがある。プロジェクト相対の `@.claude/...` やチルダの
+   `@~/.claude/...` はリテラルにスペースを含まないため安全(install.sh が
+   この形式を使うのはそのため)。clone 先を直接 `@/absolute/path/...` で
+   参照するのは避けること。
 
-2. スキルを配置(リポジトリルートで):
+2. スキルを配置(フレームワークのリポジトリルートで):
 
    ```bash
-   mkdir -p ~/.claude/skills
-   cp -r skills/deep-task skills/adversarial-review skills/hard-problem ~/.claude/skills/
+   mkdir -p /path/to/your-project/.claude/skills
+   cp -r skills/deep-task skills/adversarial-review skills/hard-problem \
+     /path/to/your-project/.claude/skills/
    ```
 
 </details>
@@ -113,7 +122,8 @@ bash scripts/install.sh --force
 変更は少しずつ入れ、実タスクで確かめてから次を変えること。
 
 将来モデルを乗り換えた場合は、モデル名(Claude Sonnet 5 / Sonnet 5)を含む
-以下のファイルをすべて更新し、`bash scripts/install.sh --force` で再導入すること:
+以下のファイルをすべて更新し、導入済みの各プロジェクトで
+`install.sh --force` を再実行して反映すること:
 
 - `core/FABLE-CORE.md` — タイトルと「Operating Posture」の identity 宣言
 - `templates/claude-ai-project-instructions.md` — 冒頭の identity 宣言

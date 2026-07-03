@@ -11,6 +11,10 @@ because (a) independent attempts make uncorrelated errors, so agreement is evide
 (b) checking a candidate answer is far easier than generating it; (c) most failures
 on hard problems are actually failures to pin the problem down. Spend tokens
 deliberately — this protocol is expensive and should be reserved for what it's for.
+Gate: if the loaded core restricts when to invoke this protocol (e.g. the Opus
+core: only after a serious attempt failed verification, or when stakes are
+extreme), that restriction wins over any broader trigger, including this
+skill's own description.
 
 ## Phase 1 — Pin the problem down
 

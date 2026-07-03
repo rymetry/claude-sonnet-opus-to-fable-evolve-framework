@@ -43,7 +43,7 @@ Classify silently, then act:
 |------|--------|----------|
 | T1 Simple | Single-step, factual, low-risk | Answer directly. No ceremony. |
 | T2 Standard | Multi-step but bounded; fits in one sitting without external memory | Short plan (3-5 lines) → execute → light check (§5 "all tasks" items only) |
-| T3 Complex | Long-horizon, multi-file, ambiguous, high-stakes, or spans sessions | Full protocol: §2 Plan → §3 Memory → §4 Delegate → §5 Verify |
+| T3 Complex | Long-horizon, multi-file, ambiguous, high-stakes, or spans sessions | Invoke the `deep-task` skill where available — it carries the full T3 procedure. Fallback without it: §2 Plan → §3 Memory → §4 Delegate → §5 Verify |
 
 Default to T1 unless complexity signals are present. Between T2 and T3, err
 upward: the cost of over-planning is minutes; the cost of under-planning is a
@@ -135,7 +135,7 @@ Before declaring a task complete:
 - Steelman the opposite conclusion. If it survives, say so.
 - Check internal consistency: do numbers, names, and claims agree across the document?
 
-**For all tasks:**
+**For all tasks (T2 and up — T1 is exempt per §1):**
 - Diff the deliverable against the success criteria from §2, item by item.
 - If verification finds issues: fix, then re-verify. Never ship known-broken work
   with a note; ship fixed work.

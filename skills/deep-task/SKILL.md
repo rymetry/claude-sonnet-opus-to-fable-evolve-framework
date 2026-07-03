@@ -1,6 +1,6 @@
 ---
 name: deep-task
-description: "Full plan-execute-verify orchestration for complex, long-horizon, or high-stakes tasks (multi-file changes, large analyses, anything spanning many steps or sessions). Use when the user says 'deep-task' or 'deep task', or when a task is clearly complex: ambiguous scope, more than ~10 steps, or costly to get wrong. NOT for simple or routine tasks, even if they touch multiple files."
+description: "Full plan-execute-verify orchestration for complex, long-horizon, or high-stakes tasks (multi-file changes, large analyses, anything spanning many steps or sessions). Use when the user says 'deep-task' or 'deep task', asks in Japanese with phrases like 'じっくり進めて', '本格的にやって', 'しっかり計画して', or when a task is clearly complex: ambiguous scope, more than ~10 steps, or costly to get wrong. NOT for simple or routine tasks, even if they touch multiple files."
 ---
 
 # Deep Task — Fable-grade orchestration
@@ -42,7 +42,9 @@ Phase 3 (verification) must never be skipped, however confident you are.
 5. Stress-test the plan before finalizing: what would make it fail? Adjust once.
 6. If planning reveals that the difficulty concentrates in a single deep
    reasoning step (not in coordination), run the `hard-problem` skill for that
-   step instead of hoping the plan absorbs it.
+   step instead of hoping the plan absorbs it. If the loaded core gates
+   hard-problem invocation more strictly (e.g. only after a failed
+   verification), the core's gate wins.
 7. **Checkpoint with the user:** present the plan summary and success criteria
    briefly before executing. Skip only if the task is low-risk or the user
    explicitly asked for full autonomy.
@@ -61,22 +63,24 @@ Phase 3 (verification) must never be skipped, however confident you are.
 
 ## Phase 3 — Adversarial Verification (mandatory)
 
-If the `adversarial-review` skill is available, run it for this phase — it
-carries the fuller procedure (fresh-context setup, check categories, no-subagent
-fallback). The brief below is the fallback for when that skill is not installed.
+1. **Run the review.** If the `adversarial-review` skill is available, run it
+   for this step — it carries the fuller procedure (fresh-context setup, check
+   categories, close-the-loop) — and let it drive triage and re-verification.
 
-Use a FRESH context for review whenever possible — a verification subagent, or a
-deliberately adversarial re-pass. The reviewer's brief:
+   Fallback when that skill is not installed: use a FRESH context — a
+   verification subagent, or a deliberately adversarial re-pass — with this brief:
 
-> You did not write this. Find every problem: correctness, edge cases, missing
-> requirements, internal inconsistencies, unverified claims. Report everything,
-> including low-confidence findings, each with confidence (high/med/low) +
-> severity (blocker/major/minor/nit). Coverage first — a separate step filters.
+   > You did not write this. Find every problem: correctness, edge cases, missing
+   > requirements, internal inconsistencies, unverified claims. Report everything,
+   > including low-confidence findings, each with confidence (high/med/low) +
+   > severity (blocker/major/minor/nit). Coverage first — a separate step filters.
 
-Then, as orchestrator:
-1. Triage: fix all blockers/majors, batch minors, judge nits.
-2. Re-verify the fixes (run tests again, re-check facts).
-3. Diff final deliverable against the Phase 0 success criteria, item by item.
+   Then triage (fix all blockers/majors, batch minors, judge nits) and
+   re-verify each fix.
+
+2. **Whichever path ran**: diff the final deliverable against the Phase 0
+   success criteria, item by item. This step is never delegated and never
+   skipped.
 
 ## Phase 4 — Deliver
 

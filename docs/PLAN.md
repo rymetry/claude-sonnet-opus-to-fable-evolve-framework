@@ -60,7 +60,8 @@ claude-sonnet-to-fable-evolve-framework/
 ├── docs/
 │   └── PLAN.md                  ← 本書
 ├── core/
-│   └── FABLE-CORE.md            ← 中核。常時ロードされる行動原則(英語)
+│   ├── FABLE-CORE.md            ← Sonnet 5 用中核。常時ロードされる行動原則(英語)
+│   └── OPUS-CORE.md             ← Opus 用軽量ハーネス(§8。install.sh --model opus で導入)
 ├── skills/
 │   ├── deep-task/SKILL.md       ← T3タスク用フル・オーケストレーション
 │   ├── adversarial-review/SKILL.md ← 敵対的レビュー(単体でも使用可)
@@ -125,7 +126,39 @@ claude.aiだけ機能が限られるため、縮約版はファイル・委譲�
 - 効果は定性的。導入後、実タスクでの体感差(特にコードレビュー網羅性と長期タスクの
   迷子率)を見てFABLE-COREをチューニングすることを推奨。
 
-## 8. 次のステップ
+## 8. Opus 用変種(OPUS-CORE)の設計
+
+Fable 5 が使えない場面の受け皿は Sonnet 5 だけでなく Opus(4.8+)もありうる。
+そのための軽量ハーネス `core/OPUS-CORE.md` を用意した。導入は
+`install.sh --model opus`。配置先は両変種共通の `.claude/fable/CORE.md` で、
+1プロジェクトに core は常に1つ。モデル乗り換えは `--model` を変えて再実行する
+だけで中身が差し替わり、CLAUDE.md の import 行は変わらない(2つの core が
+同時ロードされて矛盾する事態を構造的に排除する設計)。
+
+ギャップ分析(Opus 4.8 対 Fable 5)の要点と対処:
+
+| ギャップ | 中身 | OPUS-CORE での対処 |
+|---|---|---|
+| 字義通り解釈 | Sonnet 固有ではなく世代共通(公式が Opus 4.8 にも同一文言で明記) | 意図スコープの明示指示を維持 |
+| 長期セッションの一貫性 | 超長セッションで劣化し、タスクが長いほど Fable との差が開く | STATE.md 外部メモリ+「コンパクション連打より新セッション再開」を維持(最高レバレッジ) |
+| 最難問の初回正答率 | 分解が効かない問題で Fable の約半分の完了率(二次情報) | hard-problem プロトコルを維持しつつ、発動を「検証失敗後」に限定 |
+| ツール・委譲の過小使用 | 推論を優先しツールを呼ばない・サブエージェントを立てない傾向(公式) | 「調べられるものは調べる」「独立作業は一括 fan-out」へ押す指示を追加(Sonnet 用と逆方向) |
+| 些末タスクの過剰思考 | 単純タスクで考えすぎて劣化(公式の effort 注記+実務報告) | T1「儀式なし・考えすぎない」を明文化 |
+
+FABLE-CORE から削ったもの(Opus 4.8 がネイティブに持つため):
+自己検証の反復強制(4.7 比で欠陥見逃し約1/4)、進捗報告の強制、誠実さ系の
+念押し、委譲の詳細な手順書き。一方「網羅優先レビュー」(放置すると高重大度
+のみに間引く挙動は Opus も同じ)と検証ゲート1回は残した。
+
+§番号は FABLE-CORE と揃えてあり、スキル内の「FABLE-CORE §n」参照は
+OPUS-CORE の同番号節に解決される(OPUS-CORE 冒頭に明記)。スキル3種は
+両変種で共用する。
+
+正直な限界: 最難問の初回正答率と超長文脈の検索精度は地力差であり、
+ハーネスで縮むが消えない。本節のベンチ数値は大半が二次情報のため、
+判断に使う前に一次情報での確認を推奨(§参考情報源)。
+
+## 9. 次のステップ
 
 1. README.md の手順で Claude Code に導入(最も効果が出る環境)
 2. 代表的なタスク2〜3件をSonnet 5+フレームワークで実行し、過去にFableで得た
@@ -142,9 +175,14 @@ claude.aiだけ機能が限られるため、縮約版はファイル・委譲�
 - [Effective context engineering for AI agents](https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents)
 - [Effective harnesses for long-running agents](https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents) — §3外部メモリの根拠
 - [How we built our multi-agent research system](https://www.anthropic.com/engineering/multi-agent-research-system) — 委譲設計(中核§4)の根拠
+- [Prompting Claude Opus 4.8](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-opus-4-8) — §8 の「字義通り解釈は世代共通」「ツール・委譲の過小使用」「網羅優先レビューは Opus にも必要」の根拠
+- [Introducing Claude Opus 4.8](https://www.anthropic.com/news/claude-opus-4-8) — §8 の「自己検証はネイティブ(欠陥見逃し約1/4)」の根拠
+- [What's new in Claude Opus 4.8](https://platform.claude.com/docs/en/about-claude/models/whats-new-claude-4-8) — effort デフォルト等の根拠
 
 二次情報(非公式。日付・価格・ベンチ数値はここ由来のため、判断に使う前に一次情報での再確認を推奨):
 
 - [Fable 5 usage-credits切替の解説 (digitalapplied.com)](https://www.digitalapplied.com/blog/claude-fable-5-usage-credits-july-7-pricing-guide-2026)
 - [サブスク復帰方針の報道 (BleepingComputer)](https://www.bleepingcomputer.com/news/artificial-intelligence/claude-fable-5-isnt-permanently-leaving-subscriptions-anthropic-says/)
 - [Fable 5 vs Sonnet 5 ベンチマーク (BenchLM)](https://benchlm.ai/compare/claude-fable-vs-claude-sonnet-5)
+- [Fable 5 vs Opus 4.8 比較 (CodingFleet)](https://codingfleet.com/blog/claude-fable-5-vs-claude-opus-4-8/) — §8 のベンチ数値の主な出典
+- [Opus 4.8 実務フィードバック集 (claudeai.dev)](https://claudeai.dev/blog/claude-opus-4-8-feedback/) — §8 の失敗モード(過剰思考・長セッション劣化)の出典

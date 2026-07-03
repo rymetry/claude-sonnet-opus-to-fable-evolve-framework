@@ -7,7 +7,9 @@ Sonnet 5 を Fable 5 級の品質で動かすためのコンテキストフレ�
 
 ## 構成
 
-- [`core/FABLE-CORE.md`](core/FABLE-CORE.md) — 中核となる行動原則。常時ロードして使う
+- [`core/FABLE-CORE.md`](core/FABLE-CORE.md) — Sonnet 5 用の中核行動原則。常時ロードして使う
+- [`core/OPUS-CORE.md`](core/OPUS-CORE.md) — Opus(4.8+)用の軽量ハーネス。Fable 5 が使えず
+  Opus に切り替える場面用(設計根拠は [docs/PLAN.md](docs/PLAN.md) §8)
 - [`skills/deep-task/`](skills/deep-task/SKILL.md) — 複雑タスク用の計画→実行→検証オーケストレーション
 - [`skills/adversarial-review/`](skills/adversarial-review/SKILL.md) — 敵対的レビュー(成果物の検証)
 - [`skills/hard-problem/`](skills/hard-problem/SKILL.md) — 分解が効かない難問用(独立多重試行+敵対的照合+計算検証)
@@ -29,10 +31,20 @@ bash /path/to/claude-sonnet-to-fable-evolve-framework/scripts/install.sh
 
 スクリプトは導入先プロジェクトに以下を行う(再実行しても安全):
 
-1. `skills/` 配下の 3 スキルを `<project>/.claude/skills/` にコピー
-2. `core/FABLE-CORE.md` を `<project>/.claude/fable/FABLE-CORE.md` にコピー
-3. `<project>/CLAUDE.md` に `@.claude/fable/FABLE-CORE.md` のインポート行を
-   1 行追記(既存の内容には触れない。FABLE-CORE の import が既にあればスキップ)
+1. `skills/` 配下の 3 スキルを `<project>/.claude/skills/` にコピー(両モデル共用)
+2. 選択したモデル用の core を `<project>/.claude/fable/CORE.md` にコピー
+   (デフォルトは Sonnet 5 用。`--model opus` で Opus 用に切り替え)
+3. `<project>/CLAUDE.md` に `@.claude/fable/CORE.md` のインポート行を
+   1 行追記(既存の内容には触れない。core の import が既にあればスキップ)
+
+**モデルの選択**: プロジェクトで主に使うモデルに合わせて core を選ぶ。
+1プロジェクトに core は常に1つで、乗り換えは `--model` を変えて再実行するだけ
+(中身だけ差し替わり、import 行は変わらない):
+
+```bash
+bash /path/to/claude-sonnet-to-fable-evolve-framework/scripts/install.sh                # Sonnet 5 用
+bash /path/to/claude-sonnet-to-fable-evolve-framework/scripts/install.sh --model opus   # Opus 用
+```
 
 再実行時、既に導入済みのスキルがあると上書き前に確認プロンプトが出る
 (非対話環境ではスキップして続行)。フレームワーク更新時など、確認なしで
@@ -53,11 +65,12 @@ bash /path/to/claude-sonnet-to-fable-evolve-framework/scripts/install.sh --globa
 <details>
 <summary>手動で導入する場合</summary>
 
-1. `core/FABLE-CORE.md` を導入先プロジェクトの `.claude/fable/` にコピーし、
-   プロジェクト直下の `CLAUDE.md` に `@.claude/fable/FABLE-CORE.md` を1行追記する
+1. 使うモデルに応じた core(`core/FABLE-CORE.md` または `core/OPUS-CORE.md`)を
+   導入先プロジェクトの `.claude/fable/CORE.md` としてコピーし、
+   プロジェクト直下の `CLAUDE.md` に `@.claude/fable/CORE.md` を1行追記する
    (全プロジェクト共通にする場合は `~/.claude/CLAUDE.md` に
-   `@~/.claude/fable/FABLE-CORE.md`)。CLAUDE.md が既にある場合は上書きせず
-   末尾に追加すること。FABLE-CORE 冒頭の HTML コメントは配布用の説明なので
+   `@~/.claude/fable/CORE.md`)。CLAUDE.md が既にある場合は上書きせず
+   末尾に追加すること。core 冒頭の HTML コメントは配布用の説明なので
    本文追記する場合は貼らなくてよい。
 
    補足: CLAUDE.md の `@path` インポートは**パスにスペースを含むと無音で
@@ -121,9 +134,11 @@ bash /path/to/claude-sonnet-to-fable-evolve-framework/scripts/install.sh --globa
 「何をすべきか」の形で具体指示を足す(Sonnet 5は肯定形の指示と実例に最もよく従う)。
 変更は少しずつ入れ、実タスクで確かめてから次を変えること。
 
-将来モデルを乗り換えた場合は、モデル名(Claude Sonnet 5 / Sonnet 5)を含む
-以下のファイルをすべて更新し、導入済みの各プロジェクトで
-`install.sh --force` を再実行して反映すること:
+Sonnet 5 ↔ Opus の乗り換えは `install.sh --model` の再実行だけでよい
+(OPUS-CORE はモデル名のバージョンを意図的にハードコードしていない)。
+将来の新モデルに合わせて Sonnet 用一式を更新する場合は、モデル名
+(Claude Sonnet 5 / Sonnet 5)を含む以下のファイルをすべて更新し、
+導入済みの各プロジェクトで `install.sh --force` を再実行して反映すること:
 
 - `core/FABLE-CORE.md` — タイトルと「Operating Posture」の identity 宣言
 - `templates/claude-ai-project-instructions.md` — 冒頭の identity 宣言

@@ -2,21 +2,26 @@
 set -euo pipefail
 
 # =============================================================================
-# install.sh — Sonnet 5 → Fable 5級 Elevation Framework の導入
+# install.sh — Claude Evolve Framework の導入(Sonnet 5 用 / Opus 用)
 #
 # 使い方(プロジェクト単位で導入。導入したいプロジェクトのルートで実行):
 #   cd /path/to/your-project
 #   bash /path/to/claude-sonnet-to-fable-evolve-framework/scripts/install.sh
 #
 # オプション:
-#   --force   既存スキルを確認なしで上書き(フレームワーク更新時の再導入用)
-#   --global  プロジェクトではなく ~/.claude/(全プロジェクト共通)に導入
+#   --model sonnet|opus  導入する core を選択(デフォルト: sonnet)
+#                        sonnet → core/FABLE-CORE.md(Sonnet 5 を Fable 5 級に引き上げる)
+#                        opus   → core/OPUS-CORE.md(Opus 用の軽量ハーネス)
+#   --force              既存スキルを確認なしで上書き(フレームワーク更新時の再導入用)
+#   --global             プロジェクトではなく ~/.claude/(全プロジェクト共通)に導入
 #
 # やること(プロジェクト導入時。--global は対象が ~/.claude/ になる):
-#   1. skills/ 配下の全スキルを <project>/.claude/skills/ にコピー
-#   2. core/FABLE-CORE.md を <project>/.claude/fable/FABLE-CORE.md にコピー(常に上書き)
-#   3. <project>/CLAUDE.md に @.claude/fable/FABLE-CORE.md を追記
-#      (空行 + 1 行。FABLE-CORE の import 行が既にあればスキップ)
+#   1. skills/ 配下の全スキルを <project>/.claude/skills/ にコピー(両モデル共用)
+#   2. 選択した core を <project>/.claude/fable/CORE.md にコピー(常に上書き)
+#      → モデルを乗り換えたら --model を変えて再実行するだけで中身が差し替わる。
+#        1プロジェクトに core は常に1つで、import 行は変わらない
+#   3. <project>/CLAUDE.md に @.claude/fable/CORE.md を追記
+#      (空行 + 1 行。core の import 行が既にあればスキップ)
 #
 # 変更前に前提を一括検証し、検証に失敗した場合は何も変更せず終了する。
 # 再実行しても安全(冪等)。非対話環境(CI 等)では既存スキルの上書き確認は
@@ -25,13 +30,25 @@ set -euo pipefail
 
 FORCE=0
 GLOBAL=0
-for arg in "$@"; do
-  case "$arg" in
+MODEL="sonnet"
+while [[ $# -gt 0 ]]; do
+  case "$1" in
     --force) FORCE=1 ;;
     --global) GLOBAL=1 ;;
-    *) echo "❌ 不明な引数: $arg (使い方: bash scripts/install.sh [--force] [--global])"; exit 1 ;;
+    --model)
+      [[ $# -ge 2 ]] || { echo "❌ --model には値が必要です (sonnet|opus)"; exit 1; }
+      MODEL="$2"; shift ;;
+    --model=*) MODEL="${1#*=}" ;;
+    *) echo "❌ 不明な引数: $1 (使い方: bash scripts/install.sh [--model sonnet|opus] [--force] [--global])"; exit 1 ;;
   esac
+  shift
 done
+
+case "$MODEL" in
+  sonnet) CORE_BASENAME="FABLE-CORE.md" ;;
+  opus)   CORE_BASENAME="OPUS-CORE.md" ;;
+  *) echo "❌ --model は sonnet または opus を指定してください(指定値: $MODEL)"; exit 1 ;;
+esac
 
 # スクリプト自身の位置からリポジトリルートを解決(パスにスペースがあっても動く)
 SCRIPT_SOURCE="${BASH_SOURCE[0]:-$0}"
@@ -45,7 +62,7 @@ if [[ "$GLOBAL" -eq 1 ]]; then
   CLAUDE_MD="$CLAUDE_DIR/CLAUDE.md"
   # チルダ表記で追記する(CLAUDE.md の @import は ~ を解釈する。絶対パスだと
   # ホームディレクトリにスペースを含む環境で無音で壊れる)
-  IMPORT_LINE='@~/.claude/fable/FABLE-CORE.md'
+  IMPORT_LINE='@~/.claude/fable/CORE.md'
 else
   TARGET_ROOT="$(pwd)"
   TARGET_DESC="プロジェクト ($TARGET_ROOT)"
@@ -53,7 +70,7 @@ else
   CLAUDE_MD="$TARGET_ROOT/CLAUDE.md"
   # プロジェクトの CLAUDE.md からの相対パスで参照する(リテラルにスペースを
   # 含まないため、プロジェクトの絶対パスにスペースがあっても壊れない)
-  IMPORT_LINE='@.claude/fable/FABLE-CORE.md'
+  IMPORT_LINE='@.claude/fable/CORE.md'
 fi
 SKILLS_DST="$CLAUDE_DIR/skills"
 FABLE_DST="$CLAUDE_DIR/fable"
@@ -73,8 +90,9 @@ done
 # ---------------------------------------------------------------------------
 PREFLIGHT_OK=1
 
-[[ -f "$REPO_ROOT/core/FABLE-CORE.md" ]] || {
-  echo "❌ core/FABLE-CORE.md が見つかりません。フレームワークのリポジトリ配下の"
+CORE_SRC="$REPO_ROOT/core/$CORE_BASENAME"
+[[ -f "$CORE_SRC" ]] || {
+  echo "❌ core/$CORE_BASENAME が見つかりません。フレームワークのリポジトリ配下の"
   echo "   scripts/install.sh を実行してください。"
   PREFLIGHT_OK=0
 }
@@ -98,7 +116,8 @@ fi
 
 echo ""
 echo "==================================================="
-echo "  Sonnet 5 → Fable 5級 Elevation Framework install"
+echo "  Claude Evolve Framework install"
+echo "  Model:  $MODEL (core/$CORE_BASENAME)"
 echo "  Source: $REPO_ROOT"
 echo "  Target: $TARGET_DESC"
 echo "==================================================="
@@ -138,23 +157,29 @@ for skill in "${SKILLS[@]}"; do
 done
 
 # ---------------------------------------------------------------------------
-# 2. FABLE-CORE の配置
+# 2. core の配置(選択したモデル用の core を CORE.md として配置)
 # ---------------------------------------------------------------------------
 echo ""
-echo "📄 Installing FABLE-CORE to $FABLE_DST ..."
+echo "📄 Installing core ($CORE_BASENAME) to $FABLE_DST/CORE.md ..."
 mkdir -p "$FABLE_DST"
-cp "$REPO_ROOT/core/FABLE-CORE.md" "$FABLE_DST/FABLE-CORE.md"
-echo "  ✅ FABLE-CORE.md"
+cp "$CORE_SRC" "$FABLE_DST/CORE.md"
+echo "  ✅ CORE.md ($MODEL)"
+# 旧レイアウト(FABLE-CORE.md 直接参照)からの移行: 旧ファイルが残っている場合は
+# 中身を選択した core で更新し、旧 import 行が生きていても同じ内容が読まれるようにする
+if [[ -f "$FABLE_DST/FABLE-CORE.md" ]]; then
+  cp "$CORE_SRC" "$FABLE_DST/FABLE-CORE.md"
+  echo "  ℹ️  旧レイアウトの FABLE-CORE.md も更新しました(旧 import 行との互換)"
+fi
 
 # ---------------------------------------------------------------------------
 # 3. CLAUDE.md に @import 行を追記(冪等)
-#    「@ で始まり FABLE-CORE.md で終わる行」があれば導入済みとみなす。
-#    (@core/FABLE-CORE.md 等の別経路 import との二重ロードを防ぐ。
-#     コメントアウト行や部分文字列は誤検知しない)
+#    「@ で始まり CORE.md で終わる行」があれば導入済みとみなす。
+#    (@core/FABLE-CORE.md・旧 @.claude/fable/FABLE-CORE.md 等の別経路 import
+#     との二重ロードを防ぐ。コメントアウト行や部分文字列は誤検知しない)
 # ---------------------------------------------------------------------------
 echo ""
-if [[ -f "$CLAUDE_MD" ]] && grep -qE '^@.*FABLE-CORE\.md[[:space:]]*$' "$CLAUDE_MD"; then
-  echo "🔗 CLAUDE.md には既に FABLE-CORE の import 行があります(変更なし)"
+if [[ -f "$CLAUDE_MD" ]] && grep -qE '^@.*CORE\.md[[:space:]]*$' "$CLAUDE_MD"; then
+  echo "🔗 CLAUDE.md には既に core の import 行があります(変更なし)"
 else
   {
     [[ -f "$CLAUDE_MD" && -s "$CLAUDE_MD" ]] && echo ""

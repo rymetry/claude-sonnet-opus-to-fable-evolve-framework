@@ -1,6 +1,7 @@
 # Agent Context
 
 Sonnet 5 を Fable 5 級の品質で動かすためのコンテキストフレームワーク。
+Opus 用の軽量ハーネス(`core/OPUS-CORE.md`、`install.sh --model opus` で導入)も含む。
 コンテンツはすべて Markdown で、ビルド・テストは無い。
 構成と設計判断は [README.md](README.md) と [docs/PLAN.md](docs/PLAN.md) を参照。
 
@@ -39,6 +40,7 @@ Sonnet 5 を Fable 5 級の品質で動かすためのコンテキストフレ�
 | §5 Verification | `skills/adversarial-review` 全体(スケール: blocker/major/minor/nit) |
 | §7 Hard-Problem | `skills/hard-problem` 全体 |
 | 全体の縮約 | `templates/claude-ai-project-instructions.md` |
+| 全体(Opus 変種) | `core/OPUS-CORE.md` — §番号を FABLE-CORE と一致させること(スキルの「FABLE-CORE §n」参照が同番号節に解決される前提) |
 
 ## ルール
 

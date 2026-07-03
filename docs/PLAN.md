@@ -91,7 +91,7 @@ claude-sonnet-to-fable-evolve-framework/
 
 | 環境 | 中核の載せ方 | スキル | サブエージェント |
 |---|---|---|---|
-| Claude Code | CLAUDE.md として配置 | .claude/skills/ | Task tool(フル機能) |
+| Claude Code | `.claude/fable/CORE.md` に配置し CLAUDE.md から import(install.sh が自動化) | .claude/skills/ | Task tool(フル機能) |
 | Cowork | フォルダ選択+セッション冒頭で中核を読ませる(手順はREADME) | 設定 > Capabilities から登録 | Agent tool |
 | claude.ai | プロジェクト指示に縮約版を貼付 | 不可 | 不可(自己再パスで代替) |
 
@@ -132,8 +132,9 @@ Fable 5 が使えない場面の受け皿は Sonnet 5 だけでなく Opus(4.8+)
 そのための軽量ハーネス `core/OPUS-FABLE-CORE.md` を用意した。導入は
 `install.sh --model opus`。配置先は両変種共通の `.claude/fable/CORE.md` で、
 1プロジェクトに core は常に1つ。モデル乗り換えは `--model` を変えて再実行する
-だけで中身が差し替わり、CLAUDE.md の import 行は変わらない(2つの core が
-同時ロードされて矛盾する事態を構造的に排除する設計)。
+だけで中身が差し替わり、CLAUDE.md の import 行は変わらない(**同一スコープ内では**
+2つの core が同時ロードされない設計。グローバル導入とプロジェクト導入を併用すると
+両方の CLAUDE.md が読まれてこの保証は破れるため、README で併用を非推奨としている)。
 
 ギャップ分析(Opus 4.8 対 Fable 5)の要点と対処:
 
@@ -156,7 +157,7 @@ OPUS-FABLE-CORE の同番号節に解決される(OPUS-FABLE-CORE 冒頭に明�
 
 正直な限界: 最難問の初回正答率と超長文脈の検索精度は地力差であり、
 ハーネスで縮むが消えない。本節のベンチ数値は大半が二次情報のため、
-判断に使う前に一次情報での確認を推奨(§参考情報源)。
+判断に使う前に一次情報での確認を推奨(「参考情報源」の節を参照)。
 
 ## 9. 次のステップ
 

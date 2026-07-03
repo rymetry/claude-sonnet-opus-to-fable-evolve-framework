@@ -28,10 +28,11 @@
 - PR はなるべく小さく保つ
 - 変更内容と理由を明記する
 - `scripts/install.sh` を変更した場合は `bash -n scripts/install.sh` が通ること、
-  可能なら一時 HOME(`HOME=$(mktemp -d) bash scripts/install.sh --force`)での
-  動作確認を行うこと(このリポジトリに CI・ビルド・テストは無い)
-- `core/SONNET-FABLE-CORE.md` またはスキルを変更した場合は、AGENTS.md の
-  重複対応表に従い対応箇所の整合を確認すること
+  一時ディレクトリでの動作確認を行うこと(このリポジトリに CI・ビルド・テストは無い):
+  - プロジェクト導入: `REPO=$(pwd) && (cd "$(mktemp -d)" && bash "$REPO/scripts/install.sh" --force)`
+  - グローバル導入: `HOME=$(mktemp -d) bash scripts/install.sh --global --force`
+- `core/` 配下の core(SONNET / OPUS どちらでも)またはスキルを変更した場合は、
+  AGENTS.md の重複対応表に従い対応箇所の整合(§番号の一致を含む)を確認すること
 
 ## Issue
 

@@ -1,9 +1,23 @@
 # claude-sonnet-to-fable-evolve-framework
 
+> A context framework that makes Claude Sonnet (or Opus) approximate
+> Fable-grade discipline in Claude Code. Documentation is in Japanese.
+
 Sonnet を Fable 級の品質で動かすためのコンテキストフレームワーク。
 モデルの地力を変えるのではなく、Fable が暗黙にやっている行動——深い計画、
 進捗の外部化、敵対的自己レビュー——を明示的な手順として Sonnet に与える。
 設計の背景と根拠は [docs/PLAN.md](docs/PLAN.md) を参照。
+
+## 導入前に知っておくこと
+
+- **なぜ**: Fable 5 は使用クレジット制に移行したため(経緯は
+  [docs/PLAN.md](docs/PLAN.md) §1)、サブスク枠内のモデル(Sonnet / Opus)だけで
+  Fable 級の作業品質を出す体制を作るのが目的。
+- **コスト**: 導入すると core(約1.9kトークン)が**そのプロジェクトの全セッションで
+  常時ロード**される。複雑なタスクでは検証パス・多重試行が追加のトークンを使う。
+  単純なタスクには儀式を課さないトリアージ設計でこのコストを抑えている。
+- **前提条件**: Claude Code(skills 対応版)、bash、macOS / Linux
+  (Windows は WSL または Git Bash が必要)。
 
 ## 構成
 
@@ -47,16 +61,24 @@ bash /path/to/claude-sonnet-to-fable-evolve-framework/scripts/install.sh --model
 ```
 
 再実行時、既に導入済みのスキルがあると上書き前に確認プロンプトが出る
-(非対話環境ではスキップして続行)。フレームワーク更新時など、確認なしで
-全スキルを更新するには `--force` を付ける。プロジェクトを問わず常用する場合は
-`--global` で `~/.claude/`(全プロジェクト共通)に導入することもできる:
+(非対話環境ではスキップして続行)。確認なしで全スキルを更新するには
+`--force` を付ける:
 
 ```bash
+# フレームワーク更新の反映(まず clone を git pull してから)
 bash /path/to/claude-sonnet-to-fable-evolve-framework/scripts/install.sh --force
+```
+
+プロジェクトを問わず常用する場合は `--global` で `~/.claude/`(全プロジェクト
+共通)に導入することもできる。**プロジェクト導入との併用は避けること**
+(グローバルとプロジェクトの CLAUDE.md は両方読まれるため core が二重ロード
+され、異なる `--model` を混ぜると矛盾した操舵になる):
+
+```bash
 bash /path/to/claude-sonnet-to-fable-evolve-framework/scripts/install.sh --global
 ```
 
-動作確認: `claude` を起動し、「利用可能なスキルを教えて」で 3 スキルが
+動作確認: 導入先プロジェクトで `claude` を起動し、「利用可能なスキルを教えて」で 3 スキルが
 見えることを確認。次に複雑なタスクを依頼して計画→STATE.md 作成→検証の
 流れが発動するか確認。明示的に起動したいときは「deep-taskで進めて」と言う。
 難しいタスクでは `/effort` を high/xhigh に上げると思考が深くなる
@@ -67,11 +89,11 @@ bash /path/to/claude-sonnet-to-fable-evolve-framework/scripts/install.sh --globa
 
 1. 使うモデルに応じた core(`core/SONNET-FABLE-CORE.md` または `core/OPUS-FABLE-CORE.md`)を
    導入先プロジェクトの `.claude/fable/CORE.md` としてコピーし、
-   プロジェクト直下の `CLAUDE.md` に `@.claude/fable/CORE.md` を1行追記する
-   (全プロジェクト共通にする場合は `~/.claude/CLAUDE.md` に
-   `@~/.claude/fable/CORE.md`)。CLAUDE.md が既にある場合は上書きせず
-   末尾に追加すること。core 冒頭の HTML コメントは配布用の説明なので
-   本文追記する場合は貼らなくてよい。
+   プロジェクト直下の `CLAUDE.md` に `@.claude/fable/CORE.md` を1行追記する。
+   全プロジェクト共通にする場合は、core を `~/.claude/fable/CORE.md` にコピーし、
+   `~/.claude/CLAUDE.md` に `@~/.claude/fable/CORE.md` を追記する。
+   CLAUDE.md が既にある場合は上書きせず末尾に追加すること。core 冒頭の
+   HTML コメントはメタデータなので、本文ごと貼り付ける場合は省いてよい。
 
    補足: CLAUDE.md の `@path` インポートは**パスにスペースを含むと無音で
    失敗する**既知バグがある。プロジェクト相対の `@.claude/...` やチルダの
@@ -145,6 +167,28 @@ Sonnet ↔ Opus の乗り換えは `install.sh --model` の再実行だけでよ
 **挙動前提の再評価**を行うこと: PLAN.md のギャップ分析を新モデルで見直し、
 不要になった補償を該当 core から削る。反映は導入済みの各プロジェクトで
 `install.sh --force` を再実行する。
+
+## 運用(更新・アンインストール)
+
+**更新**: clone を `git pull` してから、導入済みの各プロジェクトで
+`install.sh --force` を再実行する。導入されるのはコピーなので、clone を
+消しても導入済み環境はそのまま動く(更新を受け取るには clone を残す)。
+
+**導入先の .gitignore**: フレームワークは作業メモとして STATE.md を生成する
+ことがある。導入先リポジトリの `.gitignore` に `STATE.md` と `STATE-*.md` を
+追加しておくことを推奨(`.claude/` と `CLAUDE.md` 本体はコミットして
+チーム共有してよい)。
+
+**アンインストール**(導入先プロジェクトで):
+
+```bash
+rm -rf .claude/skills/deep-task .claude/skills/adversarial-review .claude/skills/hard-problem
+rm -rf .claude/fable
+# CLAUDE.md から次の1行を削除: @.claude/fable/CORE.md
+```
+
+グローバル導入の場合は `~/.claude/` 配下の同じパスを削除し、
+`~/.claude/CLAUDE.md` から `@~/.claude/fable/CORE.md` の行を取り除く。
 
 ## ライセンス
 

@@ -31,6 +31,14 @@ bash scripts/install.sh
 3. `~/.claude/CLAUDE.md` に `@~/.claude/fable/FABLE-CORE.md` のインポート行を
    1 行追記(既存の CLAUDE.md の内容には触れない。既に行があればスキップ)
 
+再実行時、既に導入済みのスキルがあると上書き前に確認プロンプトが出る
+(非対話環境ではスキップして続行)。フレームワーク更新時など、確認なしで
+全スキルを更新するには `--force` を付ける:
+
+```bash
+bash scripts/install.sh --force
+```
+
 動作確認: `claude` を起動し、「利用可能なスキルを教えて」で 3 スキルが
 見えることを確認。次に複雑なタスクを依頼して計画→STATE.md 作成→検証の
 流れが発動するか確認。明示的に起動したいときは「deep-taskで進めて」と言う。
@@ -103,8 +111,18 @@ bash scripts/install.sh
 効果が薄い箇所があれば `core/FABLE-CORE.md` の該当セクションへ、否定形ではなく
 「何をすべきか」の形で具体指示を足す(Sonnet 5は肯定形の指示と実例に最もよく従う)。
 変更は少しずつ入れ、実タスクで確かめてから次を変えること。
-将来モデルを乗り換えた場合は、FABLE-CORE冒頭のモデル名(Claude Sonnet 5)を
-更新すること。
+
+将来モデルを乗り換えた場合は、モデル名(Claude Sonnet 5 / Sonnet 5)を含む
+以下のファイルをすべて更新し、`bash scripts/install.sh --force` で再導入すること:
+
+- `core/FABLE-CORE.md` — タイトルと「Operating Posture」の identity 宣言
+- `templates/claude-ai-project-instructions.md` — 冒頭の identity 宣言
+- `templates/kickoff-prompt.md` — 説明文
+- `skills/deep-task/SKILL.md` — タイトル
+- `scripts/install.sh` — バナー表示
+
+特に templates 内の「you are Claude Sonnet 5 and say so if asked」を残すと、
+乗り換え後のモデルが誤った自己申告をするので注意。
 
 ## ライセンス
 

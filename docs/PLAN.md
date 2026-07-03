@@ -60,8 +60,8 @@ claude-sonnet-to-fable-evolve-framework/
 ├── docs/
 │   └── PLAN.md                  ← 本書
 ├── core/
-│   ├── FABLE-CORE.md            ← Sonnet 5 用中核。常時ロードされる行動原則(英語)
-│   └── OPUS-CORE.md             ← Opus 用軽量ハーネス(§8。install.sh --model opus で導入)
+│   ├── SONNET-FABLE-CORE.md     ← Sonnet 5 用中核。常時ロードされる行動原則(英語)
+│   └── OPUS-FABLE-CORE.md       ← Opus 用軽量ハーネス(§8。install.sh --model opus で導入)
 ├── skills/
 │   ├── deep-task/SKILL.md       ← T3タスク用フル・オーケストレーション
 │   ├── adversarial-review/SKILL.md ← 敵対的レビュー(単体でも使用可)
@@ -124,12 +124,12 @@ claude.aiだけ機能が限られるため、縮約版はファイル・委譲�
 - 検証パスと多重試行はトークン(=サブスク使用量)を追加消費する。T1タスクに
   適用しないためのトリアージ、hard-problemを乱用しないための起動条件が重要。
 - 効果は定性的。導入後、実タスクでの体感差(特にコードレビュー網羅性と長期タスクの
-  迷子率)を見てFABLE-COREをチューニングすることを推奨。
+  迷子率)を見てSONNET-FABLE-COREをチューニングすることを推奨。
 
-## 8. Opus 用変種(OPUS-CORE)の設計
+## 8. Opus 用変種(OPUS-FABLE-CORE)の設計
 
 Fable 5 が使えない場面の受け皿は Sonnet 5 だけでなく Opus(4.8+)もありうる。
-そのための軽量ハーネス `core/OPUS-CORE.md` を用意した。導入は
+そのための軽量ハーネス `core/OPUS-FABLE-CORE.md` を用意した。導入は
 `install.sh --model opus`。配置先は両変種共通の `.claude/fable/CORE.md` で、
 1プロジェクトに core は常に1つ。モデル乗り換えは `--model` を変えて再実行する
 だけで中身が差し替わり、CLAUDE.md の import 行は変わらない(2つの core が
@@ -137,7 +137,7 @@ Fable 5 が使えない場面の受け皿は Sonnet 5 だけでなく Opus(4.8+)
 
 ギャップ分析(Opus 4.8 対 Fable 5)の要点と対処:
 
-| ギャップ | 中身 | OPUS-CORE での対処 |
+| ギャップ | 中身 | OPUS-FABLE-CORE での対処 |
 |---|---|---|
 | 字義通り解釈 | Sonnet 固有ではなく世代共通(公式が Opus 4.8 にも同一文言で明記) | 意図スコープの明示指示を維持 |
 | 長期セッションの一貫性 | 超長セッションで劣化し、タスクが長いほど Fable との差が開く | STATE.md 外部メモリ+「コンパクション連打より新セッション再開」を維持(最高レバレッジ) |
@@ -145,13 +145,13 @@ Fable 5 が使えない場面の受け皿は Sonnet 5 だけでなく Opus(4.8+)
 | ツール・委譲の過小使用 | 推論を優先しツールを呼ばない・サブエージェントを立てない傾向(公式) | 「調べられるものは調べる」「独立作業は一括 fan-out」へ押す指示を追加(Sonnet 用と逆方向) |
 | 些末タスクの過剰思考 | 単純タスクで考えすぎて劣化(公式の effort 注記+実務報告) | T1「儀式なし・考えすぎない」を明文化 |
 
-FABLE-CORE から削ったもの(Opus 4.8 がネイティブに持つため):
+SONNET-FABLE-CORE から削ったもの(Opus 4.8 がネイティブに持つため):
 自己検証の反復強制(4.7 比で欠陥見逃し約1/4)、進捗報告の強制、誠実さ系の
 念押し、委譲の詳細な手順書き。一方「網羅優先レビュー」(放置すると高重大度
 のみに間引く挙動は Opus も同じ)と検証ゲート1回は残した。
 
-§番号は FABLE-CORE と揃えてあり、スキル内の「FABLE-CORE §n」参照は
-OPUS-CORE の同番号節に解決される(OPUS-CORE 冒頭に明記)。スキル3種は
+§番号は SONNET-FABLE-CORE と揃えてあり、スキル内の「SONNET-FABLE-CORE §n」参照は
+OPUS-FABLE-CORE の同番号節に解決される(OPUS-FABLE-CORE 冒頭に明記)。スキル3種は
 両変種で共用する。
 
 正直な限界: 最難問の初回正答率と超長文脈の検索精度は地力差であり、
@@ -163,7 +163,7 @@ OPUS-CORE の同番号節に解決される(OPUS-CORE 冒頭に明記)。スキ�
 1. README.md の手順で Claude Code に導入(最も効果が出る環境)
 2. 代表的なタスク2〜3件をSonnet 5+フレームワークで実行し、過去にFableで得た
    成果物(手元にあるもの)と品質を比較して基準線を把握する
-3. 差が残る領域があればFABLE-COREの該当セクションに具体指示を追記
+3. 差が残る領域があればSONNET-FABLE-COREの該当セクションに具体指示を追記
 
 ## 参考情報源
 

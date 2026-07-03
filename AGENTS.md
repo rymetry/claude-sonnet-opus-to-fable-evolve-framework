@@ -1,13 +1,13 @@
 # Agent Context
 
 Sonnet 5 を Fable 5 級の品質で動かすためのコンテキストフレームワーク。
-Opus 用の軽量ハーネス(`core/OPUS-CORE.md`、`install.sh --model opus` で導入)も含む。
+Opus 用の軽量ハーネス(`core/OPUS-FABLE-CORE.md`、`install.sh --model opus` で導入)も含む。
 コンテンツはすべて Markdown で、ビルド・テストは無い。
 構成と設計判断は [README.md](README.md) と [docs/PLAN.md](docs/PLAN.md) を参照。
 
 本リポジトリで作業する Claude Code 自体も FABLE mode で動作する:
 
-@core/FABLE-CORE.md
+@core/SONNET-FABLE-CORE.md
 
 ## コマンド
 
@@ -18,7 +18,7 @@ Opus 用の軽量ハーネス(`core/OPUS-CORE.md`、`install.sh --model opus` �
 
 ## 編集ルール
 
-- `core/FABLE-CORE.md` とスキル(`skills/*/SKILL.md`)は一部を意図的に重複させて
+- `core/SONNET-FABLE-CORE.md` とスキル(`skills/*/SKILL.md`)は一部を意図的に重複させて
   いる(スキル未導入環境でも中核だけで機能させるため)。片方を変えたら下の
   重複対応表の対応先を必ず確認する。競合時はスキル優先のルールが中核に明記されている。
 - 言語方針: モデルに常時ロードされる操舵テキスト(core・skills・
@@ -33,14 +33,14 @@ Opus 用の軽量ハーネス(`core/OPUS-CORE.md`、`install.sh --model opus` �
 
 ## 重複対応表(片方を変えたら対応先を確認)
 
-| core/FABLE-CORE.md | 対応する重複先 |
+| core/SONNET-FABLE-CORE.md | 対応する重複先 |
 |---|---|
 | §1 Triage / §2 Planning | `skills/deep-task` Phase 0-1 |
 | §3 External Memory (STATE.md) | `skills/deep-task` Phase 1 のスケルトンと終了時ルール |
 | §5 Verification | `skills/adversarial-review` 全体(スケール: blocker/major/minor/nit) |
 | §7 Hard-Problem | `skills/hard-problem` 全体 |
 | 全体の縮約 | `templates/claude-ai-project-instructions.md` |
-| 全体(Opus 変種) | `core/OPUS-CORE.md` — §番号を FABLE-CORE と一致させること(スキルの「FABLE-CORE §n」参照が同番号節に解決される前提) |
+| 全体(Opus 変種) | `core/OPUS-FABLE-CORE.md` — §番号を SONNET-FABLE-CORE と一致させること(スキルの「SONNET-FABLE-CORE §n」参照が同番号節に解決される前提) |
 
 ## ルール
 

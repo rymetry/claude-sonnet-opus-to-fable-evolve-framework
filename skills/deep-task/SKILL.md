@@ -35,7 +35,7 @@ Phase 3 (verification) must never be skipped, however confident you are.
 ## Open questions / blockers
 ```
 
-   Naming, placement, and resume rules for STATE.md follow FABLE-CORE §3
+   Naming, placement, and resume rules for STATE.md follow SONNET-FABLE-CORE §3
    (STATE-<task-slug>.md when multiple tasks share a directory, Cowork
    connected-folder placement, resume-mismatch check before following it).
 
@@ -84,5 +84,5 @@ Then, as orchestrator:
 - Report: success criteria → met/not-met, key decisions + why, known limitations,
   anything the verification could not fully confirm (labeled with confidence).
 - Delete STATE.md when the task is fully closed (default — it is working
-  memory, not a deliverable; same rule as FABLE-CORE §3). Keep it, updated to
+  memory, not a deliverable; same rule as SONNET-FABLE-CORE §3). Keep it, updated to
   final state, only when follow-up sessions are expected.

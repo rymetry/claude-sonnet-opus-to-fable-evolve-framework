@@ -10,8 +10,8 @@ set -euo pipefail
 #
 # オプション:
 #   --model sonnet|opus  導入する core を選択(デフォルト: sonnet)
-#                        sonnet → core/FABLE-CORE.md(Sonnet 5 を Fable 5 級に引き上げる)
-#                        opus   → core/OPUS-CORE.md(Opus 用の軽量ハーネス)
+#                        sonnet → core/SONNET-FABLE-CORE.md(Sonnet 5 を Fable 5 級に引き上げる)
+#                        opus   → core/OPUS-FABLE-CORE.md(Opus 用の軽量ハーネス)
 #   --force              既存スキルを確認なしで上書き(フレームワーク更新時の再導入用)
 #   --global             プロジェクトではなく ~/.claude/(全プロジェクト共通)に導入
 #
@@ -45,8 +45,8 @@ while [[ $# -gt 0 ]]; do
 done
 
 case "$MODEL" in
-  sonnet) CORE_BASENAME="FABLE-CORE.md" ;;
-  opus)   CORE_BASENAME="OPUS-CORE.md" ;;
+  sonnet) CORE_BASENAME="SONNET-FABLE-CORE.md" ;;
+  opus)   CORE_BASENAME="OPUS-FABLE-CORE.md" ;;
   *) echo "❌ --model は sonnet または opus を指定してください(指定値: $MODEL)"; exit 1 ;;
 esac
 
@@ -174,8 +174,8 @@ fi
 # ---------------------------------------------------------------------------
 # 3. CLAUDE.md に @import 行を追記(冪等)
 #    「@ で始まり CORE.md で終わる行」があれば導入済みとみなす。
-#    (@core/FABLE-CORE.md・旧 @.claude/fable/FABLE-CORE.md 等の別経路 import
-#     との二重ロードを防ぐ。コメントアウト行や部分文字列は誤検知しない)
+#    (@core/SONNET-FABLE-CORE.md・旧 @.claude/fable/FABLE-CORE.md 等の
+#     別経路 import との二重ロードを防ぐ。コメントアウト行や部分文字列は誤検知しない)
 # ---------------------------------------------------------------------------
 echo ""
 if [[ -f "$CLAUDE_MD" ]] && grep -qE '^@.*CORE\.md[[:space:]]*$' "$CLAUDE_MD"; then

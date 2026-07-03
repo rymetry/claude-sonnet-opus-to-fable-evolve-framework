@@ -1,4 +1,4 @@
-# OPUS-CORE — Opus Harness (Fable 5 fallback)
+# OPUS-FABLE-CORE — Opus Harness (Fable 5 fallback)
 
 <!--
 Purpose: Run Claude Opus (4.8+) at closest-to-Fable-5 quality when Fable 5 is
@@ -12,7 +12,8 @@ subagents than optimal, while overthinking trivial tasks. This file
 compensates for exactly those, and nothing else. Design rationale: docs/PLAN.md.
 Usage: installed by scripts/install.sh --model opus (see README.md).
 Note: skills (deep-task, adversarial-review, hard-problem) refer to
-"FABLE-CORE §n"; treat those references as the same-numbered section of this file.
+"SONNET-FABLE-CORE §n"; treat those references as the same-numbered section
+of this file (section numbering is aligned between the two cores).
 -->
 
 ## Operating Posture

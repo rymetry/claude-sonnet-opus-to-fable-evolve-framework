@@ -7,8 +7,8 @@ Sonnet 5 を Fable 5 級の品質で動かすためのコンテキストフレ�
 
 ## 構成
 
-- [`core/FABLE-CORE.md`](core/FABLE-CORE.md) — Sonnet 5 用の中核行動原則。常時ロードして使う
-- [`core/OPUS-CORE.md`](core/OPUS-CORE.md) — Opus(4.8+)用の軽量ハーネス。Fable 5 が使えず
+- [`core/SONNET-FABLE-CORE.md`](core/SONNET-FABLE-CORE.md) — Sonnet 5 用の中核行動原則。常時ロードして使う
+- [`core/OPUS-FABLE-CORE.md`](core/OPUS-FABLE-CORE.md) — Opus(4.8+)用の軽量ハーネス。Fable 5 が使えず
   Opus に切り替える場面用(設計根拠は [docs/PLAN.md](docs/PLAN.md) §8)
 - [`skills/deep-task/`](skills/deep-task/SKILL.md) — 複雑タスク用の計画→実行→検証オーケストレーション
 - [`skills/adversarial-review/`](skills/adversarial-review/SKILL.md) — 敵対的レビュー(成果物の検証)
@@ -65,7 +65,7 @@ bash /path/to/claude-sonnet-to-fable-evolve-framework/scripts/install.sh --globa
 <details>
 <summary>手動で導入する場合</summary>
 
-1. 使うモデルに応じた core(`core/FABLE-CORE.md` または `core/OPUS-CORE.md`)を
+1. 使うモデルに応じた core(`core/SONNET-FABLE-CORE.md` または `core/OPUS-FABLE-CORE.md`)を
    導入先プロジェクトの `.claude/fable/CORE.md` としてコピーし、
    プロジェクト直下の `CLAUDE.md` に `@.claude/fable/CORE.md` を1行追記する
    (全プロジェクト共通にする場合は `~/.claude/CLAUDE.md` に
@@ -92,8 +92,8 @@ bash /path/to/claude-sonnet-to-fable-evolve-framework/scripts/install.sh --globa
 ### Cowork(デスクトップ)
 
 - clone したこのフォルダをセッションで選択すれば、Claude が
-  `core/FABLE-CORE.md` を参照できる。セッション冒頭に
-  「core/FABLE-CORE.md を読んでそれに従って」と一言添えるのが確実。
+  `core/SONNET-FABLE-CORE.md` を参照できる。セッション冒頭に
+  「core/SONNET-FABLE-CORE.md を読んでそれに従って」と一言添えるのが確実。
 - スキルとして常用する場合は、設定 > Capabilities から
   `skills/` 配下の 3 スキルを登録する。
 
@@ -130,17 +130,17 @@ bash /path/to/claude-sonnet-to-fable-evolve-framework/scripts/install.sh --globa
 
 ## チューニング
 
-効果が薄い箇所があれば `core/FABLE-CORE.md` の該当セクションへ、否定形ではなく
+効果が薄い箇所があれば `core/SONNET-FABLE-CORE.md` の該当セクションへ、否定形ではなく
 「何をすべきか」の形で具体指示を足す(Sonnet 5は肯定形の指示と実例に最もよく従う)。
 変更は少しずつ入れ、実タスクで確かめてから次を変えること。
 
 Sonnet 5 ↔ Opus の乗り換えは `install.sh --model` の再実行だけでよい
-(OPUS-CORE はモデル名のバージョンを意図的にハードコードしていない)。
+(OPUS-FABLE-CORE はモデル名のバージョンを意図的にハードコードしていない)。
 将来の新モデルに合わせて Sonnet 用一式を更新する場合は、モデル名
 (Claude Sonnet 5 / Sonnet 5)を含む以下のファイルをすべて更新し、
 導入済みの各プロジェクトで `install.sh --force` を再実行して反映すること:
 
-- `core/FABLE-CORE.md` — タイトルと「Operating Posture」の identity 宣言
+- `core/SONNET-FABLE-CORE.md` — タイトルと「Operating Posture」の identity 宣言
 - `templates/claude-ai-project-instructions.md` — 冒頭の identity 宣言
 - `templates/kickoff-prompt.md` — 説明文
 - `skills/deep-task/SKILL.md` — タイトル

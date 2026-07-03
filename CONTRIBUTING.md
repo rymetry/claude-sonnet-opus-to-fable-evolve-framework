@@ -30,7 +30,7 @@
 - `scripts/install.sh` を変更した場合は `bash -n scripts/install.sh` が通ること、
   可能なら一時 HOME(`HOME=$(mktemp -d) bash scripts/install.sh --force`)での
   動作確認を行うこと(このリポジトリに CI・ビルド・テストは無い)
-- `core/FABLE-CORE.md` またはスキルを変更した場合は、AGENTS.md の
+- `core/SONNET-FABLE-CORE.md` またはスキルを変更した場合は、AGENTS.md の
   重複対応表に従い対応箇所の整合を確認すること
 
 ## Issue

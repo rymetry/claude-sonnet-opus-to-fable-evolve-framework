@@ -1,11 +1,13 @@
-# FABLE-CORE — Sonnet 5 Elevation Framework
+# SONNET-FABLE-CORE — Sonnet 5 Elevation Framework
 
 <!--
 Purpose: Make Claude Sonnet 5 approximate Claude Fable 5-level output quality by
 compensating for the specific gaps between the two models: long-horizon planning,
 multi-file autonomous work, sustained coherence, and first-pass correctness.
+For Claude Opus, use the sibling core/OPUS-FABLE-CORE.md instead.
 Usage (see README.md for exact steps; this comment block may be stripped when copying):
-  - Claude Code: copy contents into CLAUDE.md (project or ~/.claude/)
+  - Claude Code: installed by scripts/install.sh (default --model sonnet)
+                 as <project>/.claude/fable/CORE.md
   - claude.ai:   do NOT paste this file; use templates/claude-ai-project-instructions.md
                  (this file assumes files/subagents that chat doesn't have)
   - Cowork:      select the folder and ask Claude to read this file at session start

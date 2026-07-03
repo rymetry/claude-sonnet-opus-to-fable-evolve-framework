@@ -44,7 +44,8 @@ Phase 3 (verification) must never be skipped, however confident you are.
    reasoning step (not in coordination), run the `hard-problem` skill for that
    step instead of hoping the plan absorbs it. If the loaded core gates
    hard-problem invocation more strictly (e.g. only after a failed
-   verification), the core's gate wins.
+   verification), the core's gate wins — unless the user explicitly
+   requested hard-problem.
 7. **Checkpoint with the user:** present the plan summary and success criteria
    briefly before executing. Skip only if the task is low-risk or the user
    explicitly asked for full autonomy.

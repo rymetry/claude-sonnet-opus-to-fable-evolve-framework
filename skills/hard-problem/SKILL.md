@@ -13,8 +13,9 @@ on hard problems are actually failures to pin the problem down. Spend tokens
 deliberately — this protocol is expensive and should be reserved for what it's for.
 Gate: if the loaded core restricts when to invoke this protocol (e.g. the Opus
 core: only after a serious attempt failed verification, or when stakes are
-extreme), that restriction wins over any broader trigger, including this
-skill's own description.
+extreme), that restriction wins over any broader implicit trigger, including
+this skill's own description — but an explicit user request ('hard-problem',
+'難問モード') always fires this skill.
 
 ## Phase 1 — Pin the problem down
 

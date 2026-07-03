@@ -1,6 +1,6 @@
 ---
 name: adversarial-review
-description: "Fresh-context adversarial review of a finished deliverable — code, document, analysis, design, plan. Use when the user explicitly asks for a rigorous review ('adversarial-review', '敵対的レビュー', '徹底的にレビュー/検証して'), or before declaring a T3-scale deliverable (long-horizon, multi-file, or high-stakes work) complete. NOT for casual or routine review requests (a quick look at a PR, running a build, verifying a single fact) and NOT for T2-scale work, where a light self-check suffices — for those, review normally without this protocol. Also usable standalone on work produced elsewhere."
+description: "Fresh-context adversarial review of a finished deliverable — code, document, analysis, design, plan. Use when the user explicitly asks for a rigorous review ('adversarial-review', '敵対的レビュー', '徹底的にレビュー/検証して' — an explicit ask always fires this skill regardless of scale), or before declaring a T3-scale deliverable (long-horizon, multi-file, or high-stakes work) complete. NOT for casual or routine review requests (a quick look at a PR, running a build, verifying a single fact) and NOT for unrequested reviews of T2-scale work, where a light self-check suffices. Also usable standalone on work produced elsewhere."
 ---
 
 # Adversarial Review — the second pass that closes the quality gap

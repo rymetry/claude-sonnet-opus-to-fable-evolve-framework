@@ -171,16 +171,23 @@ echo "📄 Installing core ($CORE_BASENAME) to $FABLE_DST/CORE.md ..."
 mkdir -p "$FABLE_DST"
 cp "$CORE_SRC" "$FABLE_DST/CORE.md"
 echo "  ✅ CORE.md ($MODEL)"
-# 旧レイアウト(FABLE-CORE.md 直接参照)からの移行: 旧 import 行が生きている
-# 場合のみ中身を更新して互換を保ち、参照されていなければ旧ファイルを片付ける
+# 旧レイアウト(FABLE-CORE.md 直接参照)からの移行。削除は安全側に倒す:
+# - CLAUDE.md 内に言及(行内参照・コメント含む)が残る間は更新して互換を保つ
+# - グローバル領域は各プロジェクトの CLAUDE.md から参照されうるため削除しない
+# - プロジェクト領域で、その CLAUDE.md のどこからも言及されていない場合のみ削除
 if [[ -f "$FABLE_DST/FABLE-CORE.md" ]]; then
-  if [[ -f "$CLAUDE_MD" ]] && grep -qE '^@(~/)?\.claude/fable/FABLE-CORE\.md[[:space:]]*$' "$CLAUDE_MD"; then
+  if [[ -f "$CLAUDE_MD" ]] && grep -q "FABLE-CORE\.md" "$CLAUDE_MD"; then
     cp "$CORE_SRC" "$FABLE_DST/FABLE-CORE.md"
-    echo "  ℹ️  旧レイアウトの FABLE-CORE.md も更新しました(CLAUDE.md の import 行を"
+    echo "  ℹ️  旧レイアウトの FABLE-CORE.md も更新しました(CLAUDE.md 内の参照を"
     echo "     @…/CORE.md に書き換えると、次回の実行で旧ファイルは削除されます)"
+  elif [[ "$GLOBAL" -eq 1 ]]; then
+    cp "$CORE_SRC" "$FABLE_DST/FABLE-CORE.md"
+    echo "  ℹ️  旧レイアウトの FABLE-CORE.md も更新しました(グローバル領域のファイルは"
+    echo "     各プロジェクトから参照されうるため自動削除しません。どこからも参照して"
+    echo "     いないことを確認できたら手動で削除してください)"
   else
     rm -f "$FABLE_DST/FABLE-CORE.md"
-    echo "  🧹 どこからも参照されていない旧レイアウトの FABLE-CORE.md を削除しました"
+    echo "  🧹 参照されていない旧レイアウトの FABLE-CORE.md を削除しました"
   fi
 fi
 

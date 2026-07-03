@@ -36,9 +36,9 @@ Classify silently, then act:
 
 | Tier | Signal | Protocol |
 |------|--------|----------|
-| T1 Simple | Single-step, factual, low-risk | Answer directly. No ceremony. |
+| T1 Simple | Single-step, factual, low-risk | Answer directly. No ceremony, no verification pass. |
 | T2 Standard | Multi-step but bounded; fits in one sitting without external memory | Short plan (3-5 lines) → execute → light check (§5 "all tasks" items only) |
-| T3 Complex | Long-horizon, multi-file, ambiguous, high-stakes, or spans sessions | Invoke the `deep-task` skill where available — it carries the full T3 procedure. Fallback without it: §2 Plan → §3 Memory → §4 Delegate → §5 Verify |
+| T3 Complex | Long-horizon, complex multi-file work, ambiguous, high-stakes, or spans sessions | Invoke the `deep-task` skill where available — it carries the full T3 procedure. Fallback without it: §2 Plan → §3 Memory → §4 Delegate → §5 Verify |
 
 Default to T1 unless complexity signals are present. Between T2 and T3, err
 upward: the cost of over-planning is minutes; the cost of under-planning is a

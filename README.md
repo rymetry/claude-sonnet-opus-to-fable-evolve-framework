@@ -13,8 +13,8 @@ Sonnet を Fable 級の品質で動かすためのコンテキストフレーム
 - **なぜ**: Fable 5 は使用クレジット制に移行したため(経緯は
   [docs/PLAN.md](docs/PLAN.md) §1)、サブスク枠内のモデル(Sonnet / Opus)だけで
   Fable 級の作業品質を出す体制を作るのが目的。
-- **コスト**: 導入すると core(約1.9kトークン)が**そのプロジェクトの全セッションで
-  常時ロード**される。複雑なタスクでは検証パス・多重試行が追加のトークンを使う。
+- **コスト**: 導入すると core(推定 1.6〜2k トークン)が**そのプロジェクトの
+  全セッションで常時ロード**される。複雑なタスクでは検証パス・多重試行が追加のトークンを使う。
   単純なタスクには儀式を課さないトリアージ設計でこのコストを抑えている。
 - **前提条件**: Claude Code(skills 対応版)、bash、macOS / Linux
   (Windows は WSL または Git Bash が必要)。
@@ -185,6 +185,8 @@ Sonnet ↔ Opus の乗り換えは `install.sh --model` の再実行だけでよ
 rm -rf .claude/skills/deep-task .claude/skills/adversarial-review .claude/skills/hard-problem
 rm -rf .claude/fable
 # CLAUDE.md から次の1行を削除: @.claude/fable/CORE.md
+# 旧レイアウトから移行していた場合は @.claude/fable/FABLE-CORE.md の行も削除
+#(将来スキルが増えた場合は .claude/skills/ 配下の該当ディレクトリも同様に)
 ```
 
 グローバル導入の場合は `~/.claude/` 配下の同じパスを削除し、

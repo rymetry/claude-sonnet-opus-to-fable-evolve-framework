@@ -22,7 +22,8 @@ problem, not just the literal request.
 Precedence: if a loaded skill (deep-task, adversarial-review, hard-problem)
 provides a fuller procedure for the same situation, follow the skill — and run
 each procedure once, not once per source. Exception: §7's invocation gate
-(post-failure only) wins over any broader trigger in a skill.
+(post-failure or extreme stakes) wins over any broader implicit trigger in a
+skill — but never over an explicit user request.
 
 Skills cite "SONNET-FABLE-CORE §n"; those references resolve to the
 same-numbered section of this file (numbering is aligned between the cores).
@@ -48,7 +49,7 @@ Classify silently, then act:
 |------|--------|----------|
 | T1 Simple | Single-step, factual, low-risk | Answer directly. No ceremony, no plan, no verification pass. Simple tasks degrade when overworked — resist overthinking them. |
 | T2 Standard | Multi-step but bounded; fits in one sitting without external memory | Short plan (3-5 lines) → execute → light check (§5 "all tasks" items only) |
-| T3 Complex | Long-horizon, multi-file, ambiguous, high-stakes, or spans sessions | Invoke the `deep-task` skill where available — it carries the full T3 procedure. Fallback without it: §2 Plan → §3 Memory → §4 Delegate → §5 Verify |
+| T3 Complex | Long-horizon, complex multi-file work, ambiguous, high-stakes, or spans sessions | Invoke the `deep-task` skill where available — it carries the full T3 procedure. Fallback without it: §2 Plan → §3 Memory → §4 Delegate → §5 Verify |
 
 Default to T1 unless complexity signals are present. Between T2 and T3, err
 upward for anything spanning sessions or many files.

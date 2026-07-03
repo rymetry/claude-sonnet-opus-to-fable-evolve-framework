@@ -124,8 +124,15 @@ echo "==================================================="
 echo ""
 
 if [[ "$GLOBAL" -ne 1 && "$TARGET_ROOT" == "$REPO_ROOT" ]]; then
-  echo "ℹ️  フレームワーク自身のリポジトリが導入先です(このリポジトリで"
-  echo "   スキルを有効化する意図ならこのまま進めて問題ありません)。"
+  echo "ℹ️  フレームワーク自身のリポジトリが導入先です。別のプロジェクトに"
+  echo "   導入するつもりなら、そのプロジェクトのルートに cd してから実行してください。"
+  if [[ "$INTERACTIVE" -eq 1 && "$FORCE" -ne 1 ]]; then
+    read -r -p "   このまま自己導入を続行しますか? [y/N] " answer
+    if [[ ! "$answer" =~ ^[Yy]$ ]]; then
+      echo "⛔ 中止しました(何も変更していません)。"
+      exit 1
+    fi
+  fi
   echo ""
 fi
 
@@ -164,22 +171,33 @@ echo "📄 Installing core ($CORE_BASENAME) to $FABLE_DST/CORE.md ..."
 mkdir -p "$FABLE_DST"
 cp "$CORE_SRC" "$FABLE_DST/CORE.md"
 echo "  ✅ CORE.md ($MODEL)"
-# 旧レイアウト(FABLE-CORE.md 直接参照)からの移行: 旧ファイルが残っている場合は
-# 中身を選択した core で更新し、旧 import 行が生きていても同じ内容が読まれるようにする
+# 旧レイアウト(FABLE-CORE.md 直接参照)からの移行: 旧 import 行が生きている
+# 場合のみ中身を更新して互換を保ち、参照されていなければ旧ファイルを片付ける
 if [[ -f "$FABLE_DST/FABLE-CORE.md" ]]; then
-  cp "$CORE_SRC" "$FABLE_DST/FABLE-CORE.md"
-  echo "  ℹ️  旧レイアウトの FABLE-CORE.md も更新しました(旧 import 行との互換)"
+  if [[ -f "$CLAUDE_MD" ]] && grep -qE '^@(~/)?\.claude/fable/FABLE-CORE\.md[[:space:]]*$' "$CLAUDE_MD"; then
+    cp "$CORE_SRC" "$FABLE_DST/FABLE-CORE.md"
+    echo "  ℹ️  旧レイアウトの FABLE-CORE.md も更新しました(CLAUDE.md の import 行を"
+    echo "     @…/CORE.md に書き換えると、次回の実行で旧ファイルは削除されます)"
+  else
+    rm -f "$FABLE_DST/FABLE-CORE.md"
+    echo "  🧹 どこからも参照されていない旧レイアウトの FABLE-CORE.md を削除しました"
+  fi
 fi
 
 # ---------------------------------------------------------------------------
 # 3. CLAUDE.md に @import 行を追記(冪等)
-#    「@ で始まり CORE.md で終わる行」があれば導入済みとみなす。
-#    (@core/SONNET-FABLE-CORE.md・旧 @.claude/fable/FABLE-CORE.md 等の
-#     別経路 import との二重ロードを防ぐ。コメントアウト行や部分文字列は誤検知しない)
+#    既知の import 形式(新旧の配置先とリポジトリ自己参照)に完全一致する行が
+#    あれば導入済みとみなし、検出した行を表示する。無関係な @…CORE.md への
+#    偽陽性で無言スキップしない(万一誤検知した場合も表示で気づける)
 # ---------------------------------------------------------------------------
+IMPORT_REGEX='^@(~/)?(\.claude/fable/(CORE|FABLE-CORE)|core/(SONNET-FABLE-CORE|OPUS-FABLE-CORE|FABLE-CORE))\.md[[:space:]]*$'
+EXISTING_IMPORT=""
+if [[ -f "$CLAUDE_MD" ]]; then
+  EXISTING_IMPORT="$(grep -E "$IMPORT_REGEX" "$CLAUDE_MD" | head -1 || true)"
+fi
 echo ""
-if [[ -f "$CLAUDE_MD" ]] && grep -qE '^@.*CORE\.md[[:space:]]*$' "$CLAUDE_MD"; then
-  echo "🔗 CLAUDE.md には既に core の import 行があります(変更なし)"
+if [[ -n "$EXISTING_IMPORT" ]]; then
+  echo "🔗 CLAUDE.md には既に core の import 行があります(変更なし): $EXISTING_IMPORT"
 else
   {
     [[ -f "$CLAUDE_MD" && -s "$CLAUDE_MD" ]] && echo ""
@@ -192,13 +210,16 @@ fi
 # 完了
 # ---------------------------------------------------------------------------
 echo ""
+SKILL_LIST="${SKILLS[*]}"
 echo "🎉 導入完了。動作確認:"
 if [[ "$GLOBAL" -eq 1 ]]; then
-  echo "   1. claude を起動し「利用可能なスキルを教えて」で deep-task /"
+  echo "   1. claude を起動し「利用可能なスキルを教えて」で"
 else
-  echo "   1. 導入先プロジェクトで claude を起動し「利用可能なスキルを教えて」で deep-task /"
+  echo "   1. 導入先プロジェクトで claude を起動し「利用可能なスキルを教えて」で"
 fi
-echo "      adversarial-review / hard-problem が見えることを確認"
+echo "      ${SKILL_LIST// / / } が見えることを確認"
 echo "   2. 複雑なタスクを依頼して 計画 → STATE.md 作成 → 検証 の流れが"
 echo "      発動するか確認(明示起動は「deep-taskで進めて」)"
+echo "   💡 STATE.md は作業メモです。導入先リポジトリの .gitignore に"
+echo "      STATE.md / STATE-*.md を追加しておくことを推奨します"
 echo ""

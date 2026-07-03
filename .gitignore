@@ -25,9 +25,13 @@ out/
 .DS_Store
 Thumbs.db
 
-# FABLE framework working memory (FABLE-CORE §3 / deep-task が生成する)
+# Evolve framework working memory(core §3 / deep-task が生成する)
 STATE.md
 STATE-*.md
+
+# install.sh をこのリポジトリ自身に自己導入した場合の生成物
+.claude/skills/
+.claude/fable/
 
 # Debug
 npm-debug.log*

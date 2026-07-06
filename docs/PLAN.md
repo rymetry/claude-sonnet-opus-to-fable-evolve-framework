@@ -55,7 +55,7 @@ Sonnet 5は「重要なものだけ報告せよ」と言うと本当に間引い
 ## 4. 成果物構成
 
 ```
-claude-sonnet-to-fable-evolve-framework/
+claude-sonnet-opus-to-fable-evolve-framework/
 ├── README.md                    ← 環境別セットアップ手順
 ├── docs/
 │   └── PLAN.md                  ← 本書

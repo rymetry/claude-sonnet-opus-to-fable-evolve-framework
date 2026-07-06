@@ -6,7 +6,7 @@ set -euo pipefail
 #
 # 使い方(プロジェクト単位で導入。導入したいプロジェクトのルートで実行):
 #   cd /path/to/your-project
-#   bash /path/to/claude-sonnet-to-fable-evolve-framework/scripts/install.sh
+#   bash /path/to/claude-sonnet-opus-to-fable-evolve-framework/scripts/install.sh
 #
 # オプション:
 #   --model sonnet|opus  導入する core を選択(デフォルト: sonnet)

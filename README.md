@@ -1,4 +1,4 @@
-# claude-sonnet-to-fable-evolve-framework
+# claude-sonnet-opus-to-fable-evolve-framework
 
 > A context framework that makes Claude Sonnet (or Opus) approximate
 > Fable-grade discipline in Claude Code. Documentation is in Japanese.
@@ -38,9 +38,9 @@ Sonnet を Fable 級の品質で動かすためのコンテキストフレーム
 `.claude/` と `CLAUDE.md` をコミットすればチームにも共有できる):
 
 ```bash
-git clone https://github.com/rymetry/claude-sonnet-to-fable-evolve-framework.git
+git clone https://github.com/rymetry/claude-sonnet-opus-to-fable-evolve-framework.git
 cd /path/to/your-project
-bash /path/to/claude-sonnet-to-fable-evolve-framework/scripts/install.sh
+bash /path/to/claude-sonnet-opus-to-fable-evolve-framework/scripts/install.sh
 ```
 
 スクリプトは導入先プロジェクトに以下を行う(再実行しても安全):
@@ -56,8 +56,8 @@ bash /path/to/claude-sonnet-to-fable-evolve-framework/scripts/install.sh
 (中身だけ差し替わり、import 行は変わらない):
 
 ```bash
-bash /path/to/claude-sonnet-to-fable-evolve-framework/scripts/install.sh                # Sonnet 用
-bash /path/to/claude-sonnet-to-fable-evolve-framework/scripts/install.sh --model opus   # Opus 用
+bash /path/to/claude-sonnet-opus-to-fable-evolve-framework/scripts/install.sh                # Sonnet 用
+bash /path/to/claude-sonnet-opus-to-fable-evolve-framework/scripts/install.sh --model opus   # Opus 用
 ```
 
 再実行時、既に導入済みのスキルがあると上書き前に確認プロンプトが出る
@@ -66,7 +66,7 @@ bash /path/to/claude-sonnet-to-fable-evolve-framework/scripts/install.sh --model
 
 ```bash
 # フレームワーク更新の反映(まず clone を git pull してから)
-bash /path/to/claude-sonnet-to-fable-evolve-framework/scripts/install.sh --force
+bash /path/to/claude-sonnet-opus-to-fable-evolve-framework/scripts/install.sh --force
 ```
 
 プロジェクトを問わず常用する場合は `--global` で `~/.claude/`(全プロジェクト
@@ -75,7 +75,7 @@ bash /path/to/claude-sonnet-to-fable-evolve-framework/scripts/install.sh --force
 され、異なる `--model` を混ぜると矛盾した操舵になる):
 
 ```bash
-bash /path/to/claude-sonnet-to-fable-evolve-framework/scripts/install.sh --global
+bash /path/to/claude-sonnet-opus-to-fable-evolve-framework/scripts/install.sh --global
 ```
 
 動作確認: 導入先プロジェクトで `claude` を起動し、「利用可能なスキルを教えて」で 3 スキルが

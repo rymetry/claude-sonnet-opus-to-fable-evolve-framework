@@ -4,7 +4,7 @@
 
 このプロジェクトでセキュリティ上の脆弱性を発見した場合は、GitHub Issues ではなく、以下の方法で非公開にご報告ください。
 
-**報告先**: [GitHub Security Advisories](https://github.com/{{REPO}}/security/advisories/new)
+**報告先**: [GitHub Security Advisories](https://github.com/rymetry/claude-sonnet-to-fable-evolve-framework/security/advisories/new)
 
 報告に含めていただきたい情報:
 
@@ -18,6 +18,8 @@
 
 対象となるセキュリティ問題:
 
-- XSS（クロスサイトスクリプティング）
-- 依存パッケージの脆弱性
+- `scripts/install.sh` の不安全な動作(意図しないファイル削除・上書き、
+  ユーザー環境の破壊につながるエッジケース)
+- フレームワーク文書(core / skills / templates)への悪意ある指示の混入
+  (プロンプトインジェクション)
 - 意図しない情報漏洩
